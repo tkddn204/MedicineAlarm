@@ -1,10 +1,7 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
 import android.graphics.Color;
-import android.support.annotation.IdRes;
 import android.support.v7.widget.Toolbar;
-
-import com.ssangwoo.medicationalarm.R;
 
 public abstract class BaseToolbarWithBackButtonActivity extends BaseActivity {
 
@@ -15,13 +12,13 @@ public abstract class BaseToolbarWithBackButtonActivity extends BaseActivity {
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(setToolbarTitleRes());
+            getSupportActionBar().setTitle(setToolbarTitle());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
     }
 
-    protected abstract int setToolbarTitleRes();
+    protected abstract String setToolbarTitle();
     protected abstract int setToolbarViewId();
     protected abstract int setContentViewRes();
 

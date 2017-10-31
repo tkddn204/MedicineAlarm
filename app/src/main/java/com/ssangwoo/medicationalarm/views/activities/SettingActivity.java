@@ -10,8 +10,8 @@ public class SettingActivity extends BaseToolbarWithBackButtonActivity {
     }
 
     @Override
-    protected int setToolbarTitleRes() {
-        return R.string.main_setting;
+    protected String setToolbarTitle() {
+        return getString(R.string.main_setting);
     }
 
     @Override

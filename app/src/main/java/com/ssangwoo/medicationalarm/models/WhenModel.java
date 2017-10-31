@@ -1,6 +1,7 @@
 package com.ssangwoo.medicationalarm.models;
 
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ManyToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -12,8 +13,10 @@ import java.util.Date;
  */
 
 @Table(database = AppDatabase.class)
+@ManyToMany(referencedTable = MedicineModel.class)
 public class WhenModel extends BaseModel {
-    @PrimaryKey
+    @Column
+    @PrimaryKey(autoincrement = true)
     int id;
 
     @Column

@@ -3,175 +3,198 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.ssangwoo.medicationalarm.views.activities.EditMedicineActivity">
 
-    <include layout="@layout/layout_toolbar"
-        android:id="@+id/edit_toolbar" />
-    <android.support.design.widget.TextInputLayout
+    <include
+        android:id="@+id/edit_toolbar"
+        layout="@layout/layout_toolbar" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:counterEnabled="true"
-        app:counterMaxLength="@integer/max_count_edit_title">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/text_edit_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/edit_title_hint"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/text_edit_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/edit_desc_hint" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/text_edit_date_from"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/edit_date_from_hint" />
-    </android.support.design.widget.TextInputLayout>
-
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/text_edit_date_to"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/edit_date_to_hint" />
-    </android.support.design.widget.TextInputLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:orientation="horizontal">
-
-        <CheckBox
-            android:id="@+id/checkbox_edit_morning"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="16dp"
-            android:text="@string/checkbox_edit_morning"
-            android:textSize="20sp" />
-
-        <CheckBox
-            android:id="@+id/checkbox_edit_afternoon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="16dp"
-            android:text="@string/checkbox_edit_afternoon"
-            android:textSize="20sp" />
-
-        <CheckBox
-            android:id="@+id/checkbox_edit_dinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="16dp"
-            android:text="@string/checkbox_edit_dinner"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/alarm_checkbox_container"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <CheckBox
-                android:id="@+id/checkbox_edit_morning_alarm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/checkbox_edit_morning_alarm"
-                android:textSize="20sp" />
-
-            <EditText
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="매일 7:30 마다"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
-        </LinearLayout>
+                app:counterEnabled="true"
+                app:counterMaxLength="@integer/max_count_edit_title">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/text_input_edit_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/edit_title_hint"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </android.support.design.widget.TextInputLayout>
 
-            <CheckBox
-                android:id="@+id/checkbox_edit_afternoon_alarm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/checkbox_edit_afternoon_alarm"
-                android:textSize="20sp" />
-
-            <EditText
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="매일 12:30 마다"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
-        </LinearLayout>
+                app:counterEnabled="true"
+                app:counterMaxLength="@integer/max_count_edit_desc">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/text_input_edit_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/edit_desc_hint" />
+            </android.support.design.widget.TextInputLayout>
 
-        <CheckBox
-            android:id="@+id/checkbox_edit_dinner_alarm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/checkbox_edit_dinner_alarm"
-            android:textSize="20sp" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <EditText
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/text_input_edit_date_from"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/edit_date_from_hint" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/text_input_edit_date_to"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/edit_date_to_hint" />
+            </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="매일 12:30 마다"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
-        </LinearLayout>
-    </LinearLayout>
+                android:layout_margin="16dp"
+                android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/button_edit_submit"
-        android:text="@string/button_edit_submit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+                <CheckBox
+                    android:id="@+id/checkbox_edit_morning"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="16dp"
+                    android:text="@string/checkbox_edit_morning"
+                    android:textSize="20sp" />
+
+                <CheckBox
+                    android:id="@+id/checkbox_edit_afternoon"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="16dp"
+                    android:text="@string/checkbox_edit_afternoon"
+                    android:textSize="20sp" />
+
+                <CheckBox
+                    android:id="@+id/checkbox_edit_dinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="16dp"
+                    android:text="@string/checkbox_edit_dinner"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarm_checkbox_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/morning_alarm_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_edit_morning_alarm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/checkbox_edit_morning_alarm"
+                        android:textSize="20sp" />
+
+                    <EditText
+                        android:id="@+id/edit_morning_alarm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="매일 7:30 마다"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/afternoon_alarm_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_edit_afternoon_alarm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/checkbox_edit_afternoon_alarm"
+                        android:textSize="20sp" />
+
+                    <EditText
+                        android:id="@+id/edit_afternoon_alarm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="매일 12:30 마다"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/dinner_alarm_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_edit_dinner_alarm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/checkbox_edit_dinner_alarm"
+                        android:textSize="20sp" />
+
+                    <EditText
+                        android:id="@+id/edit_dinner_alarm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="매일 12:30 마다"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_edit_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/button_edit_submit" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

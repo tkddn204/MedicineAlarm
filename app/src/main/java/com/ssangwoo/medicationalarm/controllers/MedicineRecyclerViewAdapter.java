@@ -1,17 +1,23 @@
 package com.ssangwoo.medicationalarm.controllers;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
 import com.ssangwoo.medicationalarm.models.WhenModel;
+import com.ssangwoo.medicationalarm.util.AppDateFormat;
+import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -21,9 +27,11 @@ import java.util.Locale;
 public class MedicineRecyclerViewAdapter
         extends RecyclerView.Adapter<MedicineRecyclerViewAdapter.ViewHolder> {
 
-    ArrayList<MedicineModel> models;
+    List<MedicineModel> models;
+    Context context;
 
-    public MedicineRecyclerViewAdapter(ArrayList<MedicineModel> models) {
+    public MedicineRecyclerViewAdapter(Context context, List<MedicineModel> models) {
+        this.context = context;
         this.models = models;
     }
 
@@ -33,17 +41,24 @@ public class MedicineRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        MedicineModel medicineModel = models.get(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final MedicineModel medicineModel = models.get(position);
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ShowMedicineActivity.class);
+                intent.putExtra("medicine_id", medicineModel.getId());
+                context.startActivity(intent);
+            }
+        });
 
         holder.textTitle.setText(medicineModel.getTitle());
         holder.textDesc.setText(medicineModel.getDescription());
 
-        SimpleDateFormat dateFormat =
-                new SimpleDateFormat("yyyy년 MM월 dd일부터", Locale.KOREA);
-        holder.textDateFrom.setText(dateFormat.format(medicineModel.getDateFrom()));
-        dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일까지", Locale.KOREA);
-        holder.textDateTo.setText(dateFormat.format(medicineModel.getDateTo()));
+        holder.textDateFrom.setText(
+                AppDateFormat.DATE_FROM.format(medicineModel.getDateFrom()));
+        holder.textDateTo.setText(
+                AppDateFormat.DATE_TO.format(medicineModel.getDateTo()));
 
         StringBuilder textWhenBuilder = new StringBuilder();
         WhenModel when = medicineModel.getWhen();
@@ -69,6 +84,7 @@ public class MedicineRecyclerViewAdapter
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        private ConstraintLayout container;
         private TextView textTitle, textDesc;
         private TextView textDateFrom, textDateTo;
         private TextView textWhen;
@@ -77,6 +93,7 @@ public class MedicineRecyclerViewAdapter
             super(LayoutInflater.from(context)
                     .inflate(R.layout.layout_medicine_recycler_item,
                             parent, false));
+            container = itemView.findViewById(R.id.medicine_recycler_view_item_container);
             textTitle = itemView.findViewById(R.id.medicine_recycler_view_item_title);
             textDesc = itemView.findViewById(R.id.medicine_recycler_view_item_desc);
             textDateFrom = itemView.findViewById(R.id.medicine_recycler_view_item_date_from);

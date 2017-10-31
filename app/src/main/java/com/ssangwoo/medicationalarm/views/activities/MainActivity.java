@@ -2,22 +2,27 @@ package com.ssangwoo.medicationalarm.views.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.controllers.MainFragmentAdapter;
 
 public class MainActivity extends BaseActivity {
 
+    AppBarLayout appBarLayout;
     CollapsingToolbarLayout collapsingToolbarLayout;
     Toolbar toolbar;
     ViewPager viewPager;
     TabLayout tabLayout;
+    FloatingActionButton floatingActionButton;
 
     @Override
     protected void setView() {
@@ -25,11 +30,54 @@ public class MainActivity extends BaseActivity {
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if(verticalOffset == 0 && tabLayout.getSelectedTabPosition() == 0) {
+                    floatingActionButton.show();
+                } else {
+                    floatingActionButton.hide();
+                }
+            }
+        });
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int requestCode = getResources().getInteger(R.integer.request_edit_medicine);
+                startActivityForResult(
+                        new Intent(getApplicationContext(), EditMedicineActivity.class),
+                        requestCode);
+            }
+        });
+
         viewPager.setAdapter(
                 MainFragmentAdapter.newInstance(
                         this, getSupportFragmentManager()));
-
         tabLayout.setupWithViewPager(viewPager);
+        setUpTabIcons();
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if(tab.getPosition() == 0) {
+                    floatingActionButton.show();
+                } else {
+                    floatingActionButton.hide();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    private void setUpTabIcons() {
         if(tabLayout.getTabCount() > 0) {
             tabLayout.getTabAt(0).setIcon(R.drawable.ic_list);
             tabLayout.getTabAt(1).setIcon(R.drawable.ic_calendar);
@@ -39,11 +87,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == R.integer.request_edit_medicine) {
+        if(requestCode == getResources().getInteger(R.integer.request_edit_medicine)) {
             if (resultCode == RESULT_OK) {
-                viewPager.setAdapter(
-                        MainFragmentAdapter.newInstance(
-                                this, getSupportFragmentManager()));
+                viewPager.getAdapter().notifyDataSetChanged();
+                setUpTabIcons();
             }
         }
     }
@@ -51,10 +98,12 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_main);
+        appBarLayout = findViewById(R.id.main_app_bar_layout);
         collapsingToolbarLayout = findViewById(R.id.main_collapsing_toolbar_layout);
         toolbar = findViewById(R.id.main_toolbar);
         viewPager = findViewById(R.id.main_view_pager);
         tabLayout = findViewById(R.id.main_tab_layout);
+        floatingActionButton = findViewById(R.id.medicine_floating_action_button);
     }
 
     @Override
