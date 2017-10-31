@@ -7,5 +7,6 @@
     <string name="tab_title_list">목록</string>
     <string name="tab_title_calendar">일정</string>
     <string name="tab_title_analysis">분석</string>
+    <string name="main_setting">설정</string>
 
 </resources>

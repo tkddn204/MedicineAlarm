@@ -43,22 +43,6 @@ public class MainFragmentAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case 0:
-                return context.getText(R.string.tab_title_list);
-            case 1:
-                return context.getText(R.string.tab_title_calendar);
-            case 2:
-                return context.getText(R.string.tab_title_analysis);
-            default:
-                return null;
-        }
-    }
-
-
-
-    @Override
     public int getCount() {
         return FRAGMENT_COUNT;
     }
