@@ -1,5 +1,6 @@
 package com.ssangwoo.medicationalarm.views.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,12 +13,13 @@ import android.view.ViewGroup;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.controllers.MedicineRecyclerViewAdapter;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
-import com.ssangwoo.medicationalarm.models.WhenEnum;
 import com.ssangwoo.medicationalarm.models.WhenModel;
+import com.ssangwoo.medicationalarm.views.activities.EditMedicineActivity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
+
+import static android.app.Activity.RESULT_OK;
 
 public class MainMedicineListFragment extends Fragment {
 
@@ -64,14 +66,32 @@ public class MainMedicineListFragment extends Fragment {
         }
         // -------------
 
-        recyclerView = view.findViewById(R.id.medicine_recycler_view);
+        initView(view);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new MedicineRecyclerViewAdapter(medicineModels));
 
-
-        floatingActionButton = view.findViewById(R.id.medicine_floating_action_button);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(
+                        new Intent(getContext(), EditMedicineActivity.class),
+                        getResources().getInteger(R.integer.request_edit_medicine));
+            }
+        });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // TODO: 메인액티비티에 액티비티리줄트 만들기(리스트, 일정, 분석 리프레쉬)
+    }
+
+    private void initView(View view) {
+        recyclerView = view.findViewById(R.id.medicine_recycler_view);
+        floatingActionButton = view.findViewById(R.id.medicine_floating_action_button);
     }
 
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
  * Created by ssangwoo on 2017-10-30.
  */
 
+@Deprecated
 @com.raizlabs.android.dbflow.annotation.TypeConverter
 public class WhenConverter extends TypeConverter<String, WhenEnum[]> {
     @Override

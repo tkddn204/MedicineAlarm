@@ -38,7 +38,15 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void setOperationForView() {}
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == R.integer.request_edit_medicine) {
+            if (resultCode == RESULT_OK) {
+                viewPager.setAdapter(
+                        MainFragmentAdapter.newInstance(
+                                this, getSupportFragmentManager()));
+            }
+        }
+    }
 
     @Override
     protected void initView() {

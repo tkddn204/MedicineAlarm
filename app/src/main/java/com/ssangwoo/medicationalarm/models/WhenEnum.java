@@ -4,6 +4,7 @@ package com.ssangwoo.medicationalarm.models;
  * Created by ssangwoo on 2017-10-30.
  */
 
+@Deprecated
 public enum WhenEnum {
     MORNING("아침"),
     AFTERNOON("점심"),

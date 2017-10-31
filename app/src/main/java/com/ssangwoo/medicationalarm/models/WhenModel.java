@@ -26,6 +26,15 @@ public class WhenModel extends BaseModel {
     boolean isDinner;
 
     @Column
+    boolean isMorningAlarm;
+
+    @Column
+    boolean isAfternoonAlarm;
+
+    @Column
+    boolean isDinnerAlarm;
+
+    @Column
     Date morningAlarm = new Date();
 
     @Column
@@ -35,15 +44,6 @@ public class WhenModel extends BaseModel {
     Date dinnerAlarm = new Date();
 
     public WhenModel() {}
-
-    public WhenModel(boolean isMorning, boolean isAfternoon, boolean isDinner, Date morningAlarm, Date afternoonAlarm, Date dinnerAlarm) {
-        this.isMorning = isMorning;
-        this.isAfternoon = isAfternoon;
-        this.isDinner = isDinner;
-        this.morningAlarm = morningAlarm;
-        this.afternoonAlarm = afternoonAlarm;
-        this.dinnerAlarm = dinnerAlarm;
-    }
 
     public WhenModel(boolean isMorning, boolean isAfternoon, boolean isDinner) {
         this.isMorning = isMorning;
@@ -81,6 +81,30 @@ public class WhenModel extends BaseModel {
 
     public void setDinner(boolean dinner) {
         isDinner = dinner;
+    }
+
+    public boolean isMorningAlarm() {
+        return isMorningAlarm;
+    }
+
+    public void setMorningAlarm(boolean morningAlarm) {
+        isMorningAlarm = morningAlarm;
+    }
+
+    public boolean isAfternoonAlarm() {
+        return isAfternoonAlarm;
+    }
+
+    public void setAfternoonAlarm(boolean afternoonAlarm) {
+        isAfternoonAlarm = afternoonAlarm;
+    }
+
+    public boolean isDinnerAlarm() {
+        return isDinnerAlarm;
+    }
+
+    public void setDinnerAlarm(boolean dinnerAlarm) {
+        isDinnerAlarm = dinnerAlarm;
     }
 
     public Date getMorningAlarm() {

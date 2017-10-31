@@ -1,35 +1,32 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
-
-import android.graphics.Color;
-import android.support.v7.widget.Toolbar;
 import com.ssangwoo.medicationalarm.R;
 
-public class SettingActivity extends BaseActivity {
-
-    Toolbar toolbar;
+public class SettingActivity extends BaseToolbarWithBackButtonActivity {
 
     @Override
     protected void setView() {
-        toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.main_setting);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        }
+        super.setView();
     }
 
     @Override
-    protected void setOperationForView() {
+    protected int setToolbarTitleRes() {
+        return R.string.main_setting;
+    }
 
+    @Override
+    protected int setToolbarViewId() {
+        return R.id.setting_toolbar;
+    }
+
+    @Override
+    protected int setContentViewRes() {
+        return R.layout.activity_setting;
     }
 
     @Override
     protected void initView() {
-        setContentView(R.layout.activity_setting);
-        toolbar = findViewById(R.id.setting_toolbar);
+        super.initView();
     }
 
     @Override
