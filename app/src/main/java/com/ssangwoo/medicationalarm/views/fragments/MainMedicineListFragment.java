@@ -1,5 +1,6 @@
 package com.ssangwoo.medicationalarm.views.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +16,11 @@ import com.ssangwoo.medicationalarm.models.MedicineModel;
 
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
+
 public class MainMedicineListFragment extends Fragment {
+
+    MedicineRecyclerViewAdapter adapter;
 
     public MainMedicineListFragment() {
         // Required empty public constructor
@@ -36,6 +41,8 @@ public class MainMedicineListFragment extends Fragment {
         }
     }
 
+    RecyclerView recyclerView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,12 +59,25 @@ public class MainMedicineListFragment extends Fragment {
 //                );
 //        medicineModel.save();
 //        medicineModels.add(medicineModel);
-        RecyclerView recyclerView = view.findViewById(R.id.medicine_recycler_view);
+        recyclerView = view.findViewById(R.id.medicine_recycler_view);
         List<MedicineModel> medicineModels =
                 new Select().from(MedicineModel.class).queryList();
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new MedicineRecyclerViewAdapter(getContext(), medicineModels));
+        adapter = new MedicineRecyclerViewAdapter(this, medicineModels);
+        recyclerView.setAdapter(adapter);
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == getResources().getInteger(R.integer.request_edit_medicine)) {
+            if (resultCode == RESULT_OK) {
+                List<MedicineModel> medicineModels =
+                        new Select().from(MedicineModel.class).queryList();
+                adapter = new MedicineRecyclerViewAdapter(this, medicineModels);
+                recyclerView.setAdapter(adapter);
+//                adapter.notifyDataSetChanged();
+            }
+        }
     }
 }

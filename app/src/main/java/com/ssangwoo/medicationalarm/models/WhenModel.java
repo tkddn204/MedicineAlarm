@@ -5,6 +5,7 @@ import com.raizlabs.android.dbflow.annotation.ManyToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 
 import java.util.Date;
 
@@ -20,37 +21,46 @@ public class WhenModel extends BaseModel {
     int id;
 
     @Column
-    boolean isMorning;
+    boolean isBreakfast;
 
     @Column
-    boolean isAfternoon;
+    boolean isLunch;
 
     @Column
     boolean isDinner;
 
-    @Column
-    boolean isMorningAlarm;
+    @Column(typeConverter = TakeMedicineConverter.class)
+    TakeMedicineEnum takeBreakfast = TakeMedicineEnum.NOT_YET_TAKE;
+
+    @Column(typeConverter = TakeMedicineConverter.class)
+    TakeMedicineEnum takeLunch = TakeMedicineEnum.NOT_YET_TAKE;
+
+    @Column(typeConverter = TakeMedicineConverter.class)
+    TakeMedicineEnum takeDinner = TakeMedicineEnum.NOT_YET_TAKE;
 
     @Column
-    boolean isAfternoonAlarm;
+    boolean isBreakfastAlarm;
+
+    @Column
+    boolean isLunchAlarm;
 
     @Column
     boolean isDinnerAlarm;
 
     @Column
-    Date morningAlarm = new Date();
+    Date breakfastAlarm = new Date();
 
     @Column
-    Date afternoonAlarm = new Date();
+    Date lunchAlarm = new Date();
 
     @Column
     Date dinnerAlarm = new Date();
 
     public WhenModel() {}
 
-    public WhenModel(boolean isMorning, boolean isAfternoon, boolean isDinner) {
-        this.isMorning = isMorning;
-        this.isAfternoon = isAfternoon;
+    public WhenModel(boolean isBreakfast, boolean isLunch, boolean isDinner) {
+        this.isBreakfast = isBreakfast;
+        this.isLunch = isLunch;
         this.isDinner = isDinner;
     }
 
@@ -62,20 +72,20 @@ public class WhenModel extends BaseModel {
         this.id = id;
     }
 
-    public boolean isMorning() {
-        return isMorning;
+    public boolean isBreakfast() {
+        return isBreakfast;
     }
 
-    public void setMorning(boolean morning) {
-        isMorning = morning;
+    public void setBreakfast(boolean breakfast) {
+        isBreakfast = breakfast;
     }
 
-    public boolean isAfternoon() {
-        return isAfternoon;
+    public boolean isLunch() {
+        return isLunch;
     }
 
-    public void setAfternoon(boolean afternoon) {
-        isAfternoon = afternoon;
+    public void setLunch(boolean lunch) {
+        isLunch = lunch;
     }
 
     public boolean isDinner() {
@@ -86,20 +96,20 @@ public class WhenModel extends BaseModel {
         isDinner = dinner;
     }
 
-    public boolean isMorningAlarm() {
-        return isMorningAlarm;
+    public boolean isBreakfastAlarm() {
+        return isBreakfastAlarm;
     }
 
-    public void setMorningAlarm(boolean morningAlarm) {
-        isMorningAlarm = morningAlarm;
+    public void setBreakfastAlarm(boolean breakfastAlarm) {
+        isBreakfastAlarm = breakfastAlarm;
     }
 
-    public boolean isAfternoonAlarm() {
-        return isAfternoonAlarm;
+    public boolean isLunchAlarm() {
+        return isLunchAlarm;
     }
 
-    public void setAfternoonAlarm(boolean afternoonAlarm) {
-        isAfternoonAlarm = afternoonAlarm;
+    public void setLunchAlarm(boolean lunchAlarm) {
+        isLunchAlarm = lunchAlarm;
     }
 
     public boolean isDinnerAlarm() {
@@ -110,20 +120,20 @@ public class WhenModel extends BaseModel {
         isDinnerAlarm = dinnerAlarm;
     }
 
-    public Date getMorningAlarm() {
-        return morningAlarm;
+    public Date getBreakfastAlarm() {
+        return breakfastAlarm;
     }
 
-    public void setMorningAlarm(Date morningAlarm) {
-        this.morningAlarm = morningAlarm;
+    public void setBreakfastAlarm(Date breakfastAlarm) {
+        this.breakfastAlarm = breakfastAlarm;
     }
 
-    public Date getAfternoonAlarm() {
-        return afternoonAlarm;
+    public Date getLunchAlarm() {
+        return lunchAlarm;
     }
 
-    public void setAfternoonAlarm(Date afternoonAlarm) {
-        this.afternoonAlarm = afternoonAlarm;
+    public void setLunchAlarm(Date lunchAlarm) {
+        this.lunchAlarm = lunchAlarm;
     }
 
     public Date getDinnerAlarm() {

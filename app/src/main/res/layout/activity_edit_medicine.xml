@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="16dp"
-                    android:text="@string/checkbox_edit_morning"
+                    android:text="@string/breakfast"
                     android:textSize="20sp" />
 
                 <CheckBox
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="16dp"
-                    android:text="@string/checkbox_edit_afternoon"
+                    android:text="@string/lunch"
                     android:textSize="20sp" />
 
                 <CheckBox
@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="16dp"
-                    android:text="@string/checkbox_edit_dinner"
+                    android:text="@string/dinner"
                     android:textSize="20sp" />
             </LinearLayout>
 

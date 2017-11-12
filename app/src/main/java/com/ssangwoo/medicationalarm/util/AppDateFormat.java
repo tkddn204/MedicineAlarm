@@ -9,7 +9,7 @@ import java.util.Locale;
 
 public class AppDateFormat {
     public static final SimpleDateFormat DATE_FROM =
-            new SimpleDateFormat("yyyy년 MM월 dd일부터", Locale.KOREA);
+            new SimpleDateFormat("yy.MM.dd 부터", Locale.KOREA);
     public static final SimpleDateFormat DATE_TO =
-            new SimpleDateFormat("yyyy년 MM월 dd일까지", Locale.KOREA);
+            new SimpleDateFormat("yy.MM.dd 까지", Locale.KOREA);
 }

@@ -3,6 +3,7 @@ package com.ssangwoo.medicationalarm.controllers;
 import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +16,7 @@ import com.ssangwoo.medicationalarm.models.WhenModel;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by ssangwoo on 2017-10-29.
@@ -28,10 +26,17 @@ public class MedicineRecyclerViewAdapter
         extends RecyclerView.Adapter<MedicineRecyclerViewAdapter.ViewHolder> {
 
     List<MedicineModel> models;
+    Fragment fragment;
     Context context;
 
-    public MedicineRecyclerViewAdapter(Context context, List<MedicineModel> models) {
-        this.context = context;
+//    public MedicineRecyclerViewAdapter(Context context, List<MedicineModel> models) {
+//        this.context = context;
+//        this.models = models;
+//    }
+
+    public MedicineRecyclerViewAdapter(Fragment fragment, List<MedicineModel> models) {
+        this.fragment = fragment;
+        this.context = fragment.getContext();
         this.models = models;
     }
 
@@ -48,7 +53,8 @@ public class MedicineRecyclerViewAdapter
             public void onClick(View view) {
                 Intent intent = new Intent(context, ShowMedicineActivity.class);
                 intent.putExtra("medicine_id", medicineModel.getId());
-                context.startActivity(intent);
+                fragment.startActivityForResult(intent,
+                        context.getResources().getInteger(R.integer.request_edit_medicine));
             }
         });
 
@@ -62,18 +68,13 @@ public class MedicineRecyclerViewAdapter
 
         StringBuilder textWhenBuilder = new StringBuilder();
         WhenModel when = medicineModel.getWhen();
-        if(when.isMorning()) {
-            textWhenBuilder.append("아침\n");
-        }
-        if(when.isAfternoon()) {
-            textWhenBuilder.append("점심\n");
-        }
-        if(when.isDinner()) {
-            textWhenBuilder.append("저녁\n");
-        }
+        if(when.isBreakfast()) textWhenBuilder.append("아침\n");
+        if(when.isLunch())     textWhenBuilder.append("점심\n");
+        if(when.isDinner())    textWhenBuilder.append("저녁\n");
         if(textWhenBuilder.length() != 0) {
             textWhenBuilder.deleteCharAt(textWhenBuilder.length() - 1);
         }
+
         holder.textWhen.setText(textWhenBuilder.toString());
     }
 
@@ -82,7 +83,7 @@ public class MedicineRecyclerViewAdapter
         return models.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private ConstraintLayout container;
         private TextView textTitle, textDesc;
@@ -100,7 +101,5 @@ public class MedicineRecyclerViewAdapter
             textDateTo = itemView.findViewById(R.id.medicine_recycler_view_item_date_to);
             textWhen = itemView.findViewById(R.id.medicine_recycler_view_item_when);
         }
-
-
     }
 }
