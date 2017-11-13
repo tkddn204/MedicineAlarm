@@ -58,10 +58,28 @@ public class WhenModel extends BaseModel {
 
     public WhenModel() {}
 
-    public WhenModel(boolean isBreakfast, boolean isLunch, boolean isDinner) {
+    public WhenModel(boolean isBreakfast, boolean isLunch, boolean isDinner,
+                     boolean isBreakfastAlarm, boolean isLunchAlarm, boolean isDinnerAlarm) {
         this.isBreakfast = isBreakfast;
         this.isLunch = isLunch;
         this.isDinner = isDinner;
+        this.isBreakfastAlarm = isBreakfastAlarm;
+        this.isLunchAlarm = isLunchAlarm;
+        this.isDinnerAlarm = isDinnerAlarm;
+    }
+
+    public WhenModel(boolean isBreakfast, boolean isLunch, boolean isDinner,
+                     boolean isBreakfastAlarm, boolean isLunchAlarm, boolean isDinnerAlarm,
+                     Date breakfastAlarm, Date lunchAlarm, Date dinnerAlarm) {
+        this.isBreakfast = isBreakfast;
+        this.isLunch = isLunch;
+        this.isDinner = isDinner;
+        this.isBreakfastAlarm = isBreakfastAlarm;
+        this.isLunchAlarm = isLunchAlarm;
+        this.isDinnerAlarm = isDinnerAlarm;
+        this.breakfastAlarm = breakfastAlarm;
+        this.lunchAlarm = lunchAlarm;
+        this.dinnerAlarm = dinnerAlarm;
     }
 
     public int getId() {

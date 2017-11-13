@@ -12,4 +12,6 @@ public class AppDateFormat {
             new SimpleDateFormat("yy.MM.dd 부터", Locale.KOREA);
     public static final SimpleDateFormat DATE_TO =
             new SimpleDateFormat("yy.MM.dd 까지", Locale.KOREA);
+    public static final long DATE_AFTER_SEVEN_DAYS =
+            System.currentTimeMillis() + 518400000L;
 }

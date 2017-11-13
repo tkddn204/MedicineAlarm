@@ -6,6 +6,7 @@ import com.raizlabs.android.dbflow.annotation.ManyToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.Date;
 
@@ -28,7 +29,7 @@ public class MedicineModel extends BaseModel {
     Date dateFrom = new Date();
 
     @Column
-    Date dateTo = new Date(System.currentTimeMillis() + 518400000L);
+    Date dateTo = new Date(AppDateFormat.DATE_AFTER_SEVEN_DAYS);
 
     @ForeignKey(saveForeignKeyModel = true)
     WhenModel when;

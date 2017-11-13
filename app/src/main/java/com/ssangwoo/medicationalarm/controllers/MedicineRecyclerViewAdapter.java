@@ -54,7 +54,7 @@ public class MedicineRecyclerViewAdapter
                 Intent intent = new Intent(context, ShowMedicineActivity.class);
                 intent.putExtra("medicine_id", medicineModel.getId());
                 fragment.startActivityForResult(intent,
-                        context.getResources().getInteger(R.integer.request_edit_medicine));
+                        context.getResources().getInteger(R.integer.request_show_medicine));
             }
         });
 
