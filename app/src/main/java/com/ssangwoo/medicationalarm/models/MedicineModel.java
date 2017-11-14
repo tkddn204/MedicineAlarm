@@ -42,9 +42,11 @@ public class MedicineModel extends BaseModel {
 
     public MedicineModel() {}
 
-    public MedicineModel(String title, String description, WhenModel when) {
+    public MedicineModel(String title, String description, Date dateFrom, Date dateTo, WhenModel when) {
         this.title = title;
         this.description = description;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
         this.when = when;
     }
 

@@ -16,9 +16,9 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -48,28 +48,50 @@
                     android:hint="@string/edit_desc_hint" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
+                android:layout_margin="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/text_input_edit_date_from"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/edit_date_from_hint" />
-            </android.support.design.widget.TextInputLayout>
+                <TextView
+                    android:text="@string/text_date_from"
+                    android:textSize="24sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+                <TextView
+                    android:id="@+id/text_edit_date_from"
+                    android:textSize="24sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
+                android:layout_margin="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/text_input_edit_date_to"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/edit_date_to_hint" />
-            </android.support.design.widget.TextInputLayout>
+                <TextView
+                    android:text="@string/text_date_to"
+                    android:textSize="24sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+                <TextView
+                    android:id="@+id/text_edit_date_to"
+                    android:textSize="24sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -106,88 +128,81 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/alarm_checkbox_container"
+                android:id="@+id/breakfast_alarm_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-                <LinearLayout
-                    android:id="@+id/breakfast_alarm_container"
+                <CheckBox
+                    android:id="@+id/checkbox_edit_breakfast_alarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:checked="true"
+                    android:text="@string/checkbox_edit_morning_alarm"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/text_edit_breakfast_alarm_time"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
-                    <CheckBox
-                        android:id="@+id/checkbox_edit_breakfast_alarm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="@string/checkbox_edit_morning_alarm"
-                        android:textSize="20sp" />
+            <LinearLayout
+                android:id="@+id/lunch_alarm_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-                    <EditText
-                        android:id="@+id/edit_breakfast_alarm"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="매일 7:30 마다"
-                        android:textColor="@android:color/black"
-                        android:textSize="20sp" />
-                </LinearLayout>
+                <CheckBox
+                    android:id="@+id/checkbox_edit_lunch_alarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:checked="true"
+                    android:text="@string/checkbox_edit_afternoon_alarm"
+                    android:textSize="20sp" />
 
-                <LinearLayout
-                    android:id="@+id/lunch_alarm_container"
+                <TextView
+                    android:id="@+id/text_edit_lunch_alarm_time"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
-                    <CheckBox
-                        android:id="@+id/checkbox_edit_lunch_alarm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="@string/checkbox_edit_afternoon_alarm"
-                        android:textSize="20sp" />
+            <LinearLayout
+                android:id="@+id/dinner_alarm_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-                    <EditText
-                        android:id="@+id/edit_lunch_alarm"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="매일 12:30 마다"
-                        android:textColor="@android:color/black"
-                        android:textSize="20sp" />
-                </LinearLayout>
+                <CheckBox
+                    android:id="@+id/checkbox_edit_dinner_alarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:padding="16dp"
+                    android:text="@string/checkbox_edit_dinner_alarm"
+                    android:textSize="20sp" />
 
-                <LinearLayout
-                    android:id="@+id/dinner_alarm_container"
+                <TextView
+                    android:id="@+id/text_edit_dinner_alarm_time"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <CheckBox
-                        android:id="@+id/checkbox_edit_dinner_alarm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="@string/checkbox_edit_dinner_alarm"
-                        android:textSize="20sp" />
-
-                    <EditText
-                        android:id="@+id/edit_dinner_alarm"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="매일 12:30 마다"
-                        android:textColor="@android:color/black"
-                        android:textSize="20sp" />
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <Button

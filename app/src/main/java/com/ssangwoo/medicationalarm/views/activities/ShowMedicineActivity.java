@@ -2,23 +2,18 @@ package com.ssangwoo.medicationalarm.views.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.controllers.MedicineRecyclerViewAdapter;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
 import com.ssangwoo.medicationalarm.models.MedicineModel_Table;
 import com.ssangwoo.medicationalarm.models.WhenModel;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
-
-import java.util.List;
 
 public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
 
@@ -42,18 +37,24 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
             return;
         }
 
-        WhenModel when = medicineModel.getWhen();
+        WhenModel whenModel = medicineModel.getWhen();
 
         showTitle.setText(medicineModel.getTitle());
         showDesc.setText(medicineModel.getDescription());
         showDateFrom.setText(AppDateFormat.DATE_FROM.format(medicineModel.getDateFrom()));
         showDateTo.setText(AppDateFormat.DATE_TO.format(medicineModel.getDateTo()));
-        showBreakfast.setText(Boolean.toString(when.isBreakfast()));
-        showLunch.setText(Boolean.toString(when.isLunch()));
-        showDinner.setText(Boolean.toString(when.isDinner()));
-        showBreakfastAlarm.setText(Boolean.toString(when.isBreakfastAlarm()));
-        showLunchAlarm.setText(Boolean.toString(when.isLunchAlarm()));
-        showDinnerAlarm.setText(Boolean.toString(when.isDinnerAlarm()));
+
+        showBreakfast.setText(Boolean.toString(whenModel.isBreakfast()));
+        showLunch.setText(Boolean.toString(whenModel.isLunch()));
+        showDinner.setText(Boolean.toString(whenModel.isDinner()));
+
+        // TODO: String.format으로 바꾸기
+        showBreakfastAlarm.setText(Boolean.toString(whenModel.isBreakfastAlarm())
+                + " " + AppDateFormat.ALARM_TIME.format(whenModel.getBreakfastAlarm()));
+        showLunchAlarm.setText(Boolean.toString(whenModel.isLunchAlarm())
+                + " " + AppDateFormat.ALARM_TIME.format(whenModel.getLunchAlarm()));
+        showDinnerAlarm.setText(Boolean.toString(whenModel.isDinnerAlarm())
+                + " " + AppDateFormat.ALARM_TIME.format(whenModel.getDinnerAlarm()));
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.ssangwoo.medicationalarm.views.notifications.RemoteViewsFactory;
  */
 
 public class MedicineAlarmReceiver extends BroadcastReceiver {
+    private static final int MAGIC_NUMBER = 5378;
 
     public MedicineAlarmReceiver() {
         super();
@@ -25,6 +26,7 @@ public class MedicineAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        new MedicineAlarmController(context).wakeupAlarm();
         MedicineKeepNotification keepAlarmNotification
                 = new MedicineKeepNotification(context);
 
@@ -48,7 +50,7 @@ public class MedicineAlarmReceiver extends BroadcastReceiver {
 
         RemoteViews remoteViews = new RemoteViewsFactory(context).makeRemoteViews();
 
-        keepAlarmNotification.notify(1111,
+        keepAlarmNotification.notify(MAGIC_NUMBER + medicineModel.getId(),
                 keepAlarmNotification.makeNotification(remoteViews));
     }
 }

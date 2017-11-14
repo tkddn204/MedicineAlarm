@@ -1,18 +1,25 @@
 package com.ssangwoo.medicationalarm.views.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.controllers.MedicineRecyclerViewAdapter;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
+import com.ssangwoo.medicationalarm.models.MedicineModel_Table;
+import com.ssangwoo.medicationalarm.views.activities.EditMedicineActivity;
 
 import java.util.List;
 
@@ -73,12 +80,51 @@ public class MainMedicineListFragment extends Fragment {
         if (requestCode == getResources().getInteger(R.integer.request_edit_medicine) ||
                 requestCode == getResources().getInteger(R.integer.request_show_medicine)) {
             if (resultCode == RESULT_OK) {
-                List<MedicineModel> medicineModels =
-                        new Select().from(MedicineModel.class).queryList();
-                adapter = new MedicineRecyclerViewAdapter(this, medicineModels);
-                recyclerView.setAdapter(adapter);
-//                adapter.notifyDataSetChanged();
+                remakeMedicineList();
             }
         }
+    }
+
+    private void remakeMedicineList() {
+        List<MedicineModel> medicineModels =
+                new Select().from(MedicineModel.class).queryList();
+        adapter = new MedicineRecyclerViewAdapter(this, medicineModels);
+        recyclerView.setAdapter(adapter);
+//                adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        final int medicineId = adapter.getMedicineId();
+        MedicineModel medicineModel = new Select().from(MedicineModel.class)
+                .where(MedicineModel_Table.id.eq(medicineId)).querySingle();
+        if (medicineModel == null) {
+            Toast.makeText(getContext(),
+                    "약 정보를 불러올 수 없습니다!", Toast.LENGTH_SHORT).show();
+        }
+        if(item.getItemId() == R.id.action_show_edit) {
+            Intent intent = new Intent(getContext(), EditMedicineActivity.class);
+            intent.putExtra("edit_medicine_id", medicineId);
+            startActivityForResult(intent, getResources().getInteger(R.integer.request_edit_medicine));
+        } else if (item.getItemId() == R.id.action_show_delete){
+            new AlertDialog.Builder(getContext())
+                    .setTitle(medicineModel.getTitle() + " 삭제")
+                    .setMessage(getString(R.string.show_delete_message))
+                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            new Delete().from(MedicineModel.class)
+                                    .where(MedicineModel_Table.id.eq(medicineId))
+                                    .execute();
+                            remakeMedicineList();
+                        }
+                    }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            }).create().show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

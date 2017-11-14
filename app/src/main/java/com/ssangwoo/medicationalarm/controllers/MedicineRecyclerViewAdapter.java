@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ssangwoo.medicationalarm.R;
@@ -23,16 +26,12 @@ import java.util.List;
  */
 
 public class MedicineRecyclerViewAdapter
-        extends RecyclerView.Adapter<MedicineRecyclerViewAdapter.ViewHolder> {
+        extends RecyclerView.Adapter<MedicineRecyclerViewAdapter.ViewHolder>
+        implements View.OnCreateContextMenuListener {
 
     List<MedicineModel> models;
     Fragment fragment;
     Context context;
-
-//    public MedicineRecyclerViewAdapter(Context context, List<MedicineModel> models) {
-//        this.context = context;
-//        this.models = models;
-//    }
 
     public MedicineRecyclerViewAdapter(Fragment fragment, List<MedicineModel> models) {
         this.fragment = fragment;
@@ -47,14 +46,24 @@ public class MedicineRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final MedicineModel medicineModel = models.get(position);
+        MedicineModel medicineModel = models.get(position);
+        WhenModel whenModel = medicineModel.getWhen();
+        final int medicineId = medicineModel.getId();
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ShowMedicineActivity.class);
-                intent.putExtra("medicine_id", medicineModel.getId());
+                intent.putExtra("medicine_id", medicineId);
                 fragment.startActivityForResult(intent,
                         context.getResources().getInteger(R.integer.request_show_medicine));
+            }
+        });
+        holder.container.setOnCreateContextMenuListener(this);
+        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                setMedicineId(medicineId);
+                return false;
             }
         });
 
@@ -66,16 +75,24 @@ public class MedicineRecyclerViewAdapter
         holder.textDateTo.setText(
                 AppDateFormat.DATE_TO.format(medicineModel.getDateTo()));
 
-        StringBuilder textWhenBuilder = new StringBuilder();
-        WhenModel when = medicineModel.getWhen();
-        if(when.isBreakfast()) textWhenBuilder.append("아침\n");
-        if(when.isLunch())     textWhenBuilder.append("점심\n");
-        if(when.isDinner())    textWhenBuilder.append("저녁\n");
-        if(textWhenBuilder.length() != 0) {
-            textWhenBuilder.deleteCharAt(textWhenBuilder.length() - 1);
+        if(whenModel.isBreakfast()) {
+            holder.whenBreakfastContainer.setVisibility(View.VISIBLE);
+            if(whenModel.isBreakfastAlarm()) {
+                holder.whenBreakfastAlarmImage.setImageResource(R.drawable.ic_notifications_black);
+            }
         }
-
-        holder.textWhen.setText(textWhenBuilder.toString());
+        if(whenModel.isLunch()) {
+            holder.whenLunchContainer.setVisibility(View.VISIBLE);
+            if(whenModel.isLunchAlarm()) {
+                holder.whenLunchAlarmImage.setImageResource(R.drawable.ic_notifications_black);
+            }
+        }
+        if(whenModel.isDinner()) {
+            holder.whenDinnerContainer.setVisibility(View.VISIBLE);
+            if(whenModel.isDinnerAlarm()) {
+                holder.whenDinnerAlarmImage.setImageResource(R.drawable.ic_notifications_black);
+            }
+        }
     }
 
     @Override
@@ -88,7 +105,8 @@ public class MedicineRecyclerViewAdapter
         private ConstraintLayout container;
         private TextView textTitle, textDesc;
         private TextView textDateFrom, textDateTo;
-        private TextView textWhen;
+        private LinearLayout whenBreakfastContainer, whenLunchContainer, whenDinnerContainer;
+        private ImageView whenBreakfastAlarmImage, whenLunchAlarmImage, whenDinnerAlarmImage;
 
         public ViewHolder(Context context, ViewGroup parent) {
             super(LayoutInflater.from(context)
@@ -99,7 +117,36 @@ public class MedicineRecyclerViewAdapter
             textDesc = itemView.findViewById(R.id.medicine_recycler_view_item_desc);
             textDateFrom = itemView.findViewById(R.id.medicine_recycler_view_item_date_from);
             textDateTo = itemView.findViewById(R.id.medicine_recycler_view_item_date_to);
-            textWhen = itemView.findViewById(R.id.medicine_recycler_view_item_when);
+
+            whenBreakfastContainer
+                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast);
+            whenLunchContainer
+                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch);
+            whenDinnerContainer
+                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner);
+
+            whenBreakfastAlarmImage
+                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast_alarm);
+            whenLunchAlarmImage
+                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch_alarm);
+            whenDinnerAlarmImage
+                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner_alarm);
         }
+    }
+
+    private int medicineId;
+
+    public int getMedicineId() {
+        return medicineId;
+    }
+
+    private void setMedicineId(int medicineId) {
+        this.medicineId = medicineId;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu contextMenu, View view,
+                                    ContextMenu.ContextMenuInfo contextMenuInfo) {
+        fragment.getActivity().getMenuInflater().inflate(R.menu.menu_show_toolbar_action, contextMenu);
     }
 }

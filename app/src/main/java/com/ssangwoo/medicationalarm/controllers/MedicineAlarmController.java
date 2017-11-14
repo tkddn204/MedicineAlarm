@@ -25,7 +25,7 @@ public class MedicineAlarmController {
         this.context = context;
     }
 
-    private void startAlarm(long nextAlarmTime) {
+    public void startAlarm(long nextAlarmTime) {
         Intent intent = new Intent(context, MedicineAlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 context.getResources().getInteger(R.integer.request_medicine_broadcast),
@@ -42,42 +42,38 @@ public class MedicineAlarmController {
             intent.putExtra("alarm", true);
             context.sendBroadcast(intent);
         } else {
-            intent = new Intent(context, MainActivity.class);
-            pendingIntent = PendingIntent.getActivity(
-                    context, context.getResources().getInteger(
-                            R.integer.request_medicine_activity),
-                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager.AlarmClockInfo alarmClockInfo
-                    = new AlarmManager.AlarmClockInfo(nextAlarmTime,
-                    pendingIntent);
+                    = new AlarmManager.AlarmClockInfo(nextAlarmTime, null);
             alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
         }
     }
 
-//    private void cancelAlarm() {
-//        Intent intent = new Intent(context, AlarmReceiver.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.cancel(pendingIntent);
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-//            intent = new Intent("android.intent.action.ALARM_CHANGED");
-//            intent.putExtra("alarmSet", false);
-//            context.sendBroadcast(intent);
-//            Settings.System.putString(context.getContentResolver(),
-//                    Settings.System.NEXT_ALARM_FORMATTED, "");
-//        }
-//    }
+    public void cancelAlarm() {
+        Intent intent = new Intent(context, MedicineAlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent
+                .getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            intent = new Intent("android.intent.action.ALARM_CHANGED");
+            intent.putExtra("alarmSet", false);
+            context.sendBroadcast(intent);
+            Settings.System.putString(context.getContentResolver(),
+                    Settings.System.NEXT_ALARM_FORMATTED, "");
+        }
+    }
 
-    private void wakeupAlarm() {
+    public void wakeupAlarm() {
         PowerManager powerManager =
                 (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wakeLock =
-                powerManager.newWakeLock(
+                powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK |
+                        PowerManager.ACQUIRE_CAUSES_WAKEUP |
                         PowerManager.ON_AFTER_RELEASE, MEDICINE_ALARM_RECEIVER);
         wakeLock.acquire(WAKELOCK_ACQUIRE_TIMEOUT);
     }
 
-    private void stopAlarm() {
+    public void stopAlarm() {
         context.stopService(new Intent(context, MedicineAlarmService.class));
     }
 
