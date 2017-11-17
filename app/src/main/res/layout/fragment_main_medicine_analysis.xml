@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ssangwoo.medicationalarm.views.fragments.MainMedicineAnalysisFragment">
+    tools:context="com.ssangwoo.medicationalarm.views.fragments.MedicineAnalysisFragment">
 
     <Spinner
         android:id="@+id/main_analysis_spinner"

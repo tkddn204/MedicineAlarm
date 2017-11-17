@@ -5,22 +5,17 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.raizlabs.android.dbflow.sql.language.Delete;
-import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
 import com.ssangwoo.medicationalarm.models.MedicineModel_Table;
-import com.ssangwoo.medicationalarm.models.WhenModel;
-import com.ssangwoo.medicationalarm.util.AppDateFormat;
+import com.ssangwoo.medicationalarm.views.fragments.ShowMedicineRecyclerFragment;
 
-public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
+public class ShowMedicineActivityListener extends BaseToolbarWithBackButtonActivity
+        implements ShowMedicineRecyclerFragment.OnMedicineObjectListener {
 
-    TextView showTitle, showDesc;
-    TextView showDateFrom, showDateTo;
-    TextView showBreakfast, showLunch, showDinner;
-    TextView showBreakfastAlarm, showLunchAlarm, showDinnerAlarm;
+    ShowMedicineRecyclerFragment showFragment;
 
     MedicineModel medicineModel;
 
@@ -28,48 +23,16 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
     protected void setView() {
         super.setView();
         int medicineId = getIntent().getIntExtra("medicine_id", 0);
-        medicineModel = new Select()
-                .from(MedicineModel.class)
-                .where(MedicineModel_Table.id.eq(medicineId))
-                .querySingle();
 
-        if(medicineModel == null) {
-            return;
-        }
-
-        WhenModel whenModel = medicineModel.getWhen();
-
-        showTitle.setText(medicineModel.getTitle());
-        showDesc.setText(medicineModel.getDescription());
-        showDateFrom.setText(AppDateFormat.DATE_FROM.format(medicineModel.getDateFrom()));
-        showDateTo.setText(AppDateFormat.DATE_TO.format(medicineModel.getDateTo()));
-
-        showBreakfast.setText(Boolean.toString(whenModel.isBreakfast()));
-        showLunch.setText(Boolean.toString(whenModel.isLunch()));
-        showDinner.setText(Boolean.toString(whenModel.isDinner()));
-
-        // TODO: String.format으로 바꾸기
-        showBreakfastAlarm.setText(Boolean.toString(whenModel.isBreakfastAlarm())
-                + " " + AppDateFormat.ALARM_TIME.format(whenModel.getBreakfastAlarm()));
-        showLunchAlarm.setText(Boolean.toString(whenModel.isLunchAlarm())
-                + " " + AppDateFormat.ALARM_TIME.format(whenModel.getLunchAlarm()));
-        showDinnerAlarm.setText(Boolean.toString(whenModel.isDinnerAlarm())
-                + " " + AppDateFormat.ALARM_TIME.format(whenModel.getDinnerAlarm()));
+        showFragment = ShowMedicineRecyclerFragment.newInstance(medicineId);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.show_fragment_container, showFragment)
+                .commit();
     }
 
     @Override
-    protected void initView() {
-        super.initView();
-        showTitle = findViewById(R.id.text_show_title);
-        showDesc = findViewById(R.id.text_show_desc);
-        showDateFrom = findViewById(R.id.text_show_date_from);
-        showDateTo = findViewById(R.id.text_show_date_to);
-        showBreakfast = findViewById(R.id.text_show_breakfast);
-        showLunch = findViewById(R.id.text_show_lunch);
-        showDinner = findViewById(R.id.text_show_dinner);
-        showBreakfastAlarm = findViewById(R.id.text_show_breakfast_alarm);
-        showLunchAlarm = findViewById(R.id.text_show_lunch_alarm);
-        showDinnerAlarm = findViewById(R.id.text_show_dinner_alarm);
+    public void receive(MedicineModel medicineModel) {
+        this.medicineModel = medicineModel;
     }
 
     @Override

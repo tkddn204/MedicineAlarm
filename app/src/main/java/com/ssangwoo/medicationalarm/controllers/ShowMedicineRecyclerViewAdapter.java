@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,30 +21,28 @@ import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivityListene
 import java.util.List;
 
 /**
- * Created by ssangwoo on 2017-10-29.
+ * Created by ssangwoo on 2017-11-17.
  */
 
-public class MedicineRecyclerViewAdapter
-        extends RecyclerView.Adapter<MedicineRecyclerViewAdapter.ViewHolder>
-        implements View.OnCreateContextMenuListener {
-
+public class ShowMedicineRecyclerViewAdapter
+        extends RecyclerView.Adapter<ShowMedicineRecyclerViewAdapter.ViewHolder> {
     List<MedicineModel> medicines;
     Fragment fragment;
     Context context;
 
-    public MedicineRecyclerViewAdapter(Fragment fragment, List<MedicineModel> medicines) {
+    public ShowMedicineRecyclerFragment(Fragment fragment, List<MedicineModel> medicines) {
         this.fragment = fragment;
         this.context = fragment.getContext();
         this.medicines = medicines;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(parent.getContext(), parent);
+    public ShowMedicineRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ShowMedicineRecyclerViewAdapter.ViewHolder(parent.getContext(), parent);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ShowMedicineRecyclerViewAdapter.ViewHolder holder, int position) {
         MedicineModel medicineModel = medicines.get(position);
         WhenModel whenModel = medicineModel.getWhen();
         final int medicineId = medicineModel.getId();
@@ -132,21 +129,5 @@ public class MedicineRecyclerViewAdapter
             whenDinnerAlarmImage
                     = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner_alarm);
         }
-    }
-
-    private int medicineId;
-
-    public int getMedicineId() {
-        return medicineId;
-    }
-
-    private void setMedicineId(int medicineId) {
-        this.medicineId = medicineId;
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu contextMenu, View view,
-                                    ContextMenu.ContextMenuInfo contextMenuInfo) {
-        fragment.getActivity().getMenuInflater().inflate(R.menu.menu_show_toolbar_action, contextMenu);
     }
 }

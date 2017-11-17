@@ -1,45 +1,32 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Color;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.raizlabs.android.dbflow.sql.language.Method;
-import com.raizlabs.android.dbflow.sql.language.SQLOperator;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.sql.language.Select;
-import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
-import com.ssangwoo.medicationalarm.models.MedicineModel_Table;
-import com.ssangwoo.medicationalarm.views.fragments.MainMedicineListFragment;
+import com.ssangwoo.medicationalarm.views.fragments.MedicineRecyclerFragment;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseToolbarActivity {
 
     AppBarLayout appBarLayout;
     CollapsingToolbarLayout collapsingToolbarLayout;
-    Toolbar toolbar;
     FloatingActionButton floatingActionButton;
 
-    MainMedicineListFragment mainFragment;
+    MedicineRecyclerFragment mainFragment;
 
     @Override
     protected void setView() {
         collapsingToolbarLayout.setTitleEnabled(false);
-        toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
 
-        mainFragment = MainMedicineListFragment.newInstance();
+        mainFragment = MedicineRecyclerFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.main_fragment, mainFragment)
+                .add(R.id.main_fragment_container, mainFragment)
                 .commit();
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -67,11 +54,24 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected String setToolbarTitle() {
+        return getString(R.string.app_name);
+    }
+
+    @Override
+    protected int setToolbarViewId() {
+        return R.id.main_toolbar;
+    }
+
+    @Override
+    protected int setContentViewRes() {
+        return R.layout.activity_main;
+    }
+
+    @Override
     protected void initView() {
-        setContentView(R.layout.activity_main);
         appBarLayout = findViewById(R.id.main_app_bar_layout);
         collapsingToolbarLayout = findViewById(R.id.main_collapsing_toolbar_layout);
-        toolbar = findViewById(R.id.main_toolbar);
         floatingActionButton = findViewById(R.id.medicine_floating_action_button);
     }
 

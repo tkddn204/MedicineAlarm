@@ -1,5 +1,6 @@
 package com.ssangwoo.medicationalarm.views.fragments;
 
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,14 +9,19 @@ import android.view.ViewGroup;
 
 import com.ssangwoo.medicationalarm.R;
 
-public class MainMedicineAnalysisFragment extends Fragment {
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link MedicineCalendarFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class MedicineCalendarFragment extends Fragment {
 
-    public MainMedicineAnalysisFragment() {
+    public MedicineCalendarFragment() {
         // Required empty public constructor
     }
 
-    public static MainMedicineAnalysisFragment newInstance() {
-        MainMedicineAnalysisFragment fragment = new MainMedicineAnalysisFragment();
+    public static MedicineCalendarFragment newInstance() {
+        MedicineCalendarFragment fragment = new MedicineCalendarFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -34,6 +40,7 @@ public class MainMedicineAnalysisFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_medicine_analysis, container, false);
+        return inflater.inflate(R.layout.fragment_main_medicine_calendar, container, false);
     }
+
 }

@@ -23,19 +23,18 @@ import com.ssangwoo.medicationalarm.views.activities.EditMedicineActivity;
 
 import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
+public class MedicineRecyclerFragment extends Fragment {
 
-public class MainMedicineListFragment extends Fragment {
-
+    RecyclerView medicineRecyclerView;
     MedicineRecyclerViewAdapter adapter;
 
-    public MainMedicineListFragment() {
+    public MedicineRecyclerFragment() {
         // Required empty public constructor
     }
-    public static MainMedicineListFragment newInstance() {
-        MainMedicineListFragment fragment = new MainMedicineListFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+    public static MedicineRecyclerFragment newInstance() {
+        MedicineRecyclerFragment fragment = new MedicineRecyclerFragment();
+//        Bundle args = new Bundle();
+//        fragment.setArguments(args);
         return fragment;
     }
 
@@ -48,13 +47,11 @@ public class MainMedicineListFragment extends Fragment {
         }
     }
 
-    RecyclerView recyclerView;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(
-                R.layout.fragment_main_medicine_list, container, false);
+                R.layout.fragment_main_medicine_recycler, container, false);
 
 //        TODO: 처음에 디비 감기약 들어가게 하기(디비 비었으면)
 //        ArrayList<MedicineModel> medicineModels = new ArrayList<>();
@@ -66,12 +63,12 @@ public class MainMedicineListFragment extends Fragment {
 //                );
 //        medicineModel.save();
 //        medicineModels.add(medicineModel);
-        recyclerView = view.findViewById(R.id.medicine_recycler_view);
+        medicineRecyclerView = view.findViewById(R.id.medicine_recycler_view);
         List<MedicineModel> medicineModels =
                 new Select().from(MedicineModel.class).queryList();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        medicineRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new MedicineRecyclerViewAdapter(this, medicineModels);
-        recyclerView.setAdapter(adapter);
+        medicineRecyclerView.setAdapter(adapter);
         return view;
     }
 
@@ -89,7 +86,7 @@ public class MainMedicineListFragment extends Fragment {
         List<MedicineModel> medicineModels =
                 new Select().from(MedicineModel.class).queryList();
         adapter = new MedicineRecyclerViewAdapter(this, medicineModels);
-        recyclerView.setAdapter(adapter);
+        medicineRecyclerView.setAdapter(adapter);
 //                adapter.notifyDataSetChanged();
     }
 

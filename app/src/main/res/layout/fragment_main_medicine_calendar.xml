@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ssangwoo.medicationalarm.views.fragments.MainMedicineCalendarFragment">
+    tools:context="com.ssangwoo.medicationalarm.views.fragments.MedicineCalendarFragment">
     <TextView
         android:id="@+id/text_calendar_date"
         android:text="2017년 10월"
