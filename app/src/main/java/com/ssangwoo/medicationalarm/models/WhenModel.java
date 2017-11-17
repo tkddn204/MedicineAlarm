@@ -21,13 +21,13 @@ public class WhenModel extends BaseModel {
     int id;
 
     @Column
-    boolean isBreakfast;
+    boolean isBreakfast = false;
 
     @Column
-    boolean isLunch;
+    boolean isLunch = false;
 
     @Column
-    boolean isDinner;
+    boolean isDinner = false;
 
     @Column(typeConverter = TakeMedicineConverter.class)
     TakeMedicineEnum takeBreakfast = TakeMedicineEnum.NOT_YET_TAKE;
@@ -39,13 +39,13 @@ public class WhenModel extends BaseModel {
     TakeMedicineEnum takeDinner = TakeMedicineEnum.NOT_YET_TAKE;
 
     @Column
-    boolean isBreakfastAlarm;
+    boolean isBreakfastAlarm = true;
 
     @Column
-    boolean isLunchAlarm;
+    boolean isLunchAlarm = true;
 
     @Column
-    boolean isDinnerAlarm;
+    boolean isDinnerAlarm = true;
 
     @Column
     Date breakfastAlarm = new Date();

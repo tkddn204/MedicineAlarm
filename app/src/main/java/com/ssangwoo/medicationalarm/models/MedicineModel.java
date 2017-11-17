@@ -20,10 +20,10 @@ public class MedicineModel extends BaseModel {
     int id;
 
     @Column
-    String title;
+    String title = "";
 
     @Column
-    String description;
+    String description = "";
 
     @Column
     Date dateFrom = new Date();
@@ -32,7 +32,7 @@ public class MedicineModel extends BaseModel {
     Date dateTo = new Date(AppDateFormat.DATE_AFTER_SEVEN_DAYS);
 
     @ForeignKey(saveForeignKeyModel = true)
-    WhenModel when;
+    WhenModel when = new WhenModel();
 
     @Column
     Date createdDate = new Date();

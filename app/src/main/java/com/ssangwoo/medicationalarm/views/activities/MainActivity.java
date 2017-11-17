@@ -1,16 +1,25 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.raizlabs.android.dbflow.sql.language.Method;
+import com.raizlabs.android.dbflow.sql.language.SQLOperator;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Select;
+import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.models.MedicineModel;
+import com.ssangwoo.medicationalarm.models.MedicineModel_Table;
 import com.ssangwoo.medicationalarm.views.fragments.MainMedicineListFragment;
 
 public class MainActivity extends BaseActivity {
@@ -47,10 +56,12 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 int requestCode = getResources().getInteger(R.integer.request_edit_medicine);
-                mainFragment.startActivityForResult(
-                        new Intent(getApplicationContext(),
-                                EditMedicineActivity.class),
-                        requestCode);
+                Intent intent = new Intent(getApplicationContext(),
+                        EditMedicineActivity.class);
+                MedicineModel medicineModel = new MedicineModel();
+                medicineModel.insert();
+                intent.putExtra("medicine_id", medicineModel.getId());
+                mainFragment.startActivityForResult(intent, requestCode);
             }
         });
     }

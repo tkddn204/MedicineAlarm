@@ -1,4 +1,4 @@
-package com.ssangwoo.medicationalarm.controllers;
+package com.ssangwoo.medicationalarm.alarms;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -9,24 +9,23 @@ import android.os.PowerManager;
 import android.provider.Settings;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.views.activities.MainActivity;
 
 /**
  * Created by ssangwoo on 2017-11-02.
  */
 
-public class MedicineAlarmController {
+public class AlarmController {
 
     private static final String MEDICINE_ALARM_RECEIVER = "medicine_receiver";
     private static final long WAKELOCK_ACQUIRE_TIMEOUT = 5000L;
     private final Context context;
 
-    public MedicineAlarmController(Context context) {
+    public AlarmController(Context context) {
         this.context = context;
     }
 
     public void startAlarm(long nextAlarmTime) {
-        Intent intent = new Intent(context, MedicineAlarmReceiver.class);
+        Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 context.getResources().getInteger(R.integer.request_medicine_broadcast),
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -43,13 +42,13 @@ public class MedicineAlarmController {
             context.sendBroadcast(intent);
         } else {
             AlarmManager.AlarmClockInfo alarmClockInfo
-                    = new AlarmManager.AlarmClockInfo(nextAlarmTime, null);
+                    = new AlarmManager.AlarmClockInfo(nextAlarmTime, pendingIntent);
             alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
         }
     }
 
     public void cancelAlarm() {
-        Intent intent = new Intent(context, MedicineAlarmReceiver.class);
+        Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent
                 .getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -74,7 +73,7 @@ public class MedicineAlarmController {
     }
 
     public void stopAlarm() {
-        context.stopService(new Intent(context, MedicineAlarmService.class));
+        context.stopService(new Intent(context, AlarmService.class));
     }
 
 }

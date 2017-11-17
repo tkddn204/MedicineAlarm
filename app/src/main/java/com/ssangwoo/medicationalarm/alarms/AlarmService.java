@@ -1,4 +1,4 @@
-package com.ssangwoo.medicationalarm.controllers;
+package com.ssangwoo.medicationalarm.alarms;
 
 import android.Manifest;
 import android.app.Service;
@@ -18,7 +18,7 @@ import android.os.Vibrator;
 
 import com.ssangwoo.medicationalarm.views.activities.MainActivity;
 
-public class MedicineAlarmService extends Service {
+public class AlarmService extends Service {
     // Time period between two vibration events
     private final static int VIBRATE_DELAY_TIME = 2000;
     // Vibrate for 1000 milliseconds
@@ -65,7 +65,7 @@ public class MedicineAlarmService extends Service {
             mediaPlayer.stop();
             mediaPlayer.release();
             alarmThreadHandler.removeCallbacksAndMessages(null);
-            MedicineAlarmService.this.stopSelf();
+            AlarmService.this.stopSelf();
             return true;
         }
     };
@@ -80,13 +80,6 @@ public class MedicineAlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startPlayer();
-        // Start the activity where you can stop alarm
-        Intent i = new Intent(Intent.ACTION_MAIN);
-        i.setComponent(new ComponentName(this, MainActivity.class));
-        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP |
-                Intent.FLAG_ACTIVITY_NEW_TASK |
-                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        startActivity(i);
         return START_STICKY;
     }
 
@@ -131,9 +124,9 @@ public class MedicineAlarmService extends Service {
             mPlayer.start();
 
 //            if (App.getState().settings().ramping()) {
-//                alarmThreadHandler.postDelayed(volumeRunnable, VOLUME_INCREASE_DELAY);
+                alarmThreadHandler.postDelayed(volumeRunnable, VOLUME_INCREASE_DELAY);
 //            } else {
-                mPlayer.setVolume(MAX_VOLUME, MAX_VOLUME);
+//                mPlayer.setVolume(MAX_VOLUME, MAX_VOLUME);
 //            }
         } catch (Exception e) {
             if (mPlayer.isPlaying()) {

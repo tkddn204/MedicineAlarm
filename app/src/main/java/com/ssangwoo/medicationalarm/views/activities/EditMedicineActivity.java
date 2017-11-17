@@ -1,6 +1,5 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -18,7 +17,7 @@ import android.widget.TimePicker;
 
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.controllers.MedicineAlarmController;
+import com.ssangwoo.medicationalarm.alarms.AlarmController;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
 import com.ssangwoo.medicationalarm.models.MedicineModel_Table;
 import com.ssangwoo.medicationalarm.models.WhenModel;
@@ -51,8 +50,9 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
     @Override
     protected void setView() {
         super.setView();
+        int medicineId;
         if (getIntent().hasExtra("edit_medicine_id")) {
-            int medicineId = getIntent().getIntExtra("edit_medicine_id", -1);
+            medicineId = getIntent().getIntExtra("edit_medicine_id", -1);
             medicineModel = new Select().from(MedicineModel.class)
                             .where(MedicineModel_Table.id.eq(medicineId)).querySingle();
             WhenModel whenModel = medicineModel.getWhen();
@@ -83,6 +83,9 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
             lunchAlarmTime = whenModel.getLunchAlarm();
             dinnerAlarmTime = whenModel.getDinnerAlarm();
         } else {
+            medicineId = getIntent().getIntExtra("medicine_id", -1);
+            medicineModel = new Select().from(MedicineModel.class)
+                    .where(MedicineModel_Table.id.eq(medicineId)).querySingle();
             textEditDateFrom.setText(AppDateFormat.DATE_FROM.format(dateFrom));
             textEditDateTo.setText(AppDateFormat.DATE_TO.format(dateTo));
 
@@ -190,43 +193,42 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
                 }
             });
         } else if (view.getId() == R.id.button_edit_submit) {
-            WhenModel whenModel = new WhenModel(
-                    checkBoxBreakfast.isChecked(),
-                    checkBoxLunch.isChecked(),
-                    checkBoxDinner.isChecked(),
-                    checkBoxBreakfastAlarm.isChecked(),
-                    checkBoxLunchAlarm.isChecked(),
-                    checkBoxDinnerAlarm.isChecked(),
-                    breakfastAlarmTime, lunchAlarmTime, dinnerAlarmTime);
-            if (getIntent().hasExtra("edit_medicine_id")) {
-                medicineModel.setTitle(editTitle.getText().toString());
-                medicineModel.setDescription(editDesc.getText().toString());
-                medicineModel.getWhen().delete();
-                medicineModel.setWhen(whenModel);
-                medicineModel.setModifiedDate(new Date());
-                medicineModel.update();
-            } else {
-                medicineModel = new MedicineModel(
-                        editTitle.getText().toString(),
-                        editDesc.getText().toString(),
-                        dateFrom, dateTo, whenModel);
-                medicineModel.save();
-            }
+            medicineUpdate();
 
-            MedicineAlarmController medicineAlarmController
-                    = new MedicineAlarmController(getApplicationContext());
+            AlarmController alarmController
+                    = new AlarmController(getApplicationContext());
             if(checkBoxBreakfast.isChecked() && checkBoxBreakfastAlarm.isChecked()) {
-                medicineAlarmController.startAlarm(breakfastAlarmTime.getTime());
+                alarmController.startAlarm(breakfastAlarmTime.getTime());
             }
 //            if(checkBoxLunch.isChecked() && checkBoxLunchAlarm.isChecked()) {
-//                medicineAlarmController.startAlarm(lunchAlarmTime.getTime());
+//                alarmController.startAlarm(lunchAlarmTime.getTime());
 //            }
 //            if(checkBoxDinner.isChecked() && checkBoxDinnerAlarm.isChecked()) {
-//                medicineAlarmController.startAlarm(dinnerAlarmTime.getTime());
+//                alarmController.startAlarm(dinnerAlarmTime.getTime());
 //            }
             setResult(RESULT_OK);
             finish();
         }
+    }
+
+    private void medicineUpdate() {
+        medicineModel.setTitle(editTitle.getText().toString());
+        medicineModel.setDescription(editDesc.getText().toString());
+        if(medicineModel.getWhen() != null) {
+            medicineModel.getWhen().delete();
+        }
+        medicineModel.setDateFrom(dateFrom);
+        medicineModel.setDateTo(dateTo);
+        medicineModel.setModifiedDate(new Date());
+        medicineModel.setWhen(new WhenModel(
+                checkBoxBreakfast.isChecked(),
+                checkBoxLunch.isChecked(),
+                checkBoxDinner.isChecked(),
+                checkBoxBreakfastAlarm.isChecked(),
+                checkBoxLunchAlarm.isChecked(),
+                checkBoxDinnerAlarm.isChecked(),
+                breakfastAlarmTime, lunchAlarmTime, dinnerAlarmTime));
+        medicineModel.update();
     }
 
     private void onClickEditTime(TimePickerDialog.OnTimeSetListener timeSetListener) {
@@ -296,5 +298,17 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
         textEditDinnerAlarmTime = findViewById(R.id.text_edit_dinner_alarm_time);
 
         buttonSubmit = findViewById(R.id.button_edit_submit);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        medicineUpdate();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        medicineUpdate();
     }
 }

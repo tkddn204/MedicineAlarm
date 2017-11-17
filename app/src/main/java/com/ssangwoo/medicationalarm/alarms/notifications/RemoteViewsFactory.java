@@ -1,4 +1,4 @@
-package com.ssangwoo.medicationalarm.views.notifications;
+package com.ssangwoo.medicationalarm.alarms.notifications;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.controllers.MedicineAlarmReceiver;
+import com.ssangwoo.medicationalarm.alarms.AlarmReceiver;
 import com.ssangwoo.medicationalarm.enums.NotificationActionEnum;
 
 /**
@@ -25,7 +25,7 @@ public class RemoteViewsFactory extends ContextWrapper {
         RemoteViews remoteViews = new RemoteViews(getPackageName(),
                 R.layout.layout_keep_alarm_remote_view);
 
-        Intent onClickIntent = new Intent(this, MedicineAlarmReceiver.class);
+        Intent onClickIntent = new Intent(this, AlarmReceiver.class);
         for(NotificationActionEnum actionEnum: NotificationActionEnum.values()) {
             onClickIntent.setAction(actionEnum.getAction());
             remoteViews.setOnClickPendingIntent(

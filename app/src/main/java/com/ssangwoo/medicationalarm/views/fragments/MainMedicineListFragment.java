@@ -79,9 +79,9 @@ public class MainMedicineListFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == getResources().getInteger(R.integer.request_edit_medicine) ||
                 requestCode == getResources().getInteger(R.integer.request_show_medicine)) {
-            if (resultCode == RESULT_OK) {
-                remakeMedicineList();
-            }
+//            if (resultCode == RESULT_OK) {
+//            }
+            remakeMedicineList();
         }
     }
 

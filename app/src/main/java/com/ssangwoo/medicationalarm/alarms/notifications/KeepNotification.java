@@ -1,4 +1,4 @@
-package com.ssangwoo.medicationalarm.views.notifications;
+package com.ssangwoo.medicationalarm.alarms.notifications;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -12,11 +12,11 @@ import com.ssangwoo.medicationalarm.R;
  * Created by ssangwoo on 2017-11-03.
  */
 
-public class MedicineKeepNotification extends ContextWrapper {
+public class KeepNotification extends ContextWrapper {
     Context context;
     NotificationManagerCompat managerCompat;
 
-    public MedicineKeepNotification(Context context) {
+    public KeepNotification(Context context) {
         super(context);
         this.context = context;
         this.managerCompat = NotificationManagerCompat.from(context);

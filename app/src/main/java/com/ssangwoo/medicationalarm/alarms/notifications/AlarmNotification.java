@@ -1,14 +1,11 @@
-package com.ssangwoo.medicationalarm.views.notifications;
+package com.ssangwoo.medicationalarm.alarms.notifications;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
-import android.widget.RemoteViews;
 
 import com.ssangwoo.medicationalarm.R;
 
@@ -16,11 +13,11 @@ import com.ssangwoo.medicationalarm.R;
  * Created by ssangwoo on 2017-11-03.
  */
 
-public class MedicineAlarmNotification extends ContextWrapper {
+public class AlarmNotification extends ContextWrapper {
     Context context;
     NotificationManagerCompat managerCompat;
 
-    public MedicineAlarmNotification(Context context) {
+    public AlarmNotification(Context context) {
         super(context);
         this.context = context;
         this.managerCompat = NotificationManagerCompat.from(context);
