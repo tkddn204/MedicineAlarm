@@ -7,8 +7,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.util.AppDateFormat;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by ssangwoo on 2017-11-02.
@@ -31,11 +36,14 @@ public class AlarmController {
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager =
                 (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
-            } else {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                        nextAlarmTime, pendingIntent);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
             }
             intent = new Intent("android.intent.action.ALARM_CHANGED");
             intent.putExtra("alarm", true);
@@ -73,7 +81,7 @@ public class AlarmController {
     }
 
     public void stopAlarm() {
-        context.stopService(new Intent(context, AlarmService.class));
+        context.stopService(new Intent(context, AlarmSoundService.class));
     }
 
 }

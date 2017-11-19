@@ -30,7 +30,7 @@ public class ShowMedicineRecyclerViewAdapter
     Fragment fragment;
     Context context;
 
-    public ShowMedicineRecyclerFragment(Fragment fragment, List<MedicineModel> medicines) {
+    public ShowMedicineRecyclerViewAdapter(Fragment fragment, List<MedicineModel> medicines) {
         this.fragment = fragment;
         this.context = fragment.getContext();
         this.medicines = medicines;
@@ -55,11 +55,11 @@ public class ShowMedicineRecyclerViewAdapter
                         context.getResources().getInteger(R.integer.request_show_medicine));
             }
         });
-        holder.container.setOnCreateContextMenuListener(this);
+//        holder.container.setOnCreateContextMenuListener(this);
         holder.container.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                setMedicineId(medicineId);
+//                setMedicineId(medicineId);
                 return false;
             }
         });
@@ -115,19 +115,19 @@ public class ShowMedicineRecyclerViewAdapter
             textDateFrom = itemView.findViewById(R.id.medicine_recycler_view_item_date_from);
             textDateTo = itemView.findViewById(R.id.medicine_recycler_view_item_date_to);
 
-            whenBreakfastContainer
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast);
-            whenLunchContainer
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch);
-            whenDinnerContainer
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner);
+//            whenBreakfastContainer
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast);
+//            whenLunchContainer
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch);
+//            whenDinnerContainer
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner);
 
             whenBreakfastAlarmImage
                     = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast_alarm);
-            whenLunchAlarmImage
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch_alarm);
-            whenDinnerAlarmImage
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner_alarm);
+//            whenLunchAlarmImage
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch_alarm);
+//            whenDinnerAlarmImage
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner_alarm);
         }
     }
 }

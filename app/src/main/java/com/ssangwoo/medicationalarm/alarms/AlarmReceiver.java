@@ -3,7 +3,9 @@ package com.ssangwoo.medicationalarm.alarms;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.enums.NotificationActionEnum;
@@ -30,19 +32,18 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
-        new AlarmController(context).wakeupAlarm();
+        //new AlarmController(context).wakeupAlarm();
         //keepAlarm(intent);
-        context.startService(new Intent(context, AlarmService.class));
-
+        Toast.makeText(context, "알람울림!!!!", Toast.LENGTH_SHORT).show();
         MedicineModel medicineModel =
                 new Select().from(MedicineModel.class).where().querySingle();
-
         AlarmNotification alarmNotification
                 = new AlarmNotification(context);
-
         alarmNotification.notify(MAGIC_NUMBER + medicineModel.getId(),
                 alarmNotification.makeNotification(medicineModel.getTitle(),
                         "아침"));
+
+        context.startService(new Intent(context, AlarmSoundService.class));
     }
 
     private void keepAlarm(Intent intent) {

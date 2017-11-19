@@ -2,7 +2,6 @@ package com.ssangwoo.medicationalarm.alarms;
 
 import android.Manifest;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,9 +15,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Vibrator;
 
-import com.ssangwoo.medicationalarm.views.activities.MainActivity;
-
-public class AlarmService extends Service {
+public class AlarmSoundService extends Service {
     // Time period between two vibration events
     private final static int VIBRATE_DELAY_TIME = 2000;
     // Vibrate for 1000 milliseconds
@@ -65,7 +62,7 @@ public class AlarmService extends Service {
             mediaPlayer.stop();
             mediaPlayer.release();
             alarmThreadHandler.removeCallbacksAndMessages(null);
-            AlarmService.this.stopSelf();
+            AlarmSoundService.this.stopSelf();
             return true;
         }
     };

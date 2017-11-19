@@ -4,7 +4,7 @@
     <integer name="request_show_medicine">11</integer>
     <integer name="max_count_edit_title">20</integer>
     <integer name="max_count_edit_desc">21</integer>
-    <integer name="request_medicine_broadcast">1357</integer>
+    <integer name="request_medicine_broadcast">17</integer>
     <integer name="request_medicine_activity">2468</integer>
 
 </resources>

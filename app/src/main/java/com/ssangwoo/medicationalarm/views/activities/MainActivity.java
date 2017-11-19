@@ -22,6 +22,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     @Override
     protected void setView() {
+        super.setView();
         collapsingToolbarLayout.setTitleEnabled(false);
 
         mainFragment = MedicineRecyclerFragment.newInstance();
@@ -70,6 +71,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     @Override
     protected void initView() {
+        super.initView();
         appBarLayout = findViewById(R.id.main_app_bar_layout);
         collapsingToolbarLayout = findViewById(R.id.main_collapsing_toolbar_layout);
         floatingActionButton = findViewById(R.id.medicine_floating_action_button);

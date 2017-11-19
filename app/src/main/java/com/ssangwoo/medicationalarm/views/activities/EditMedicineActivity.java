@@ -195,8 +195,7 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
         } else if (view.getId() == R.id.button_edit_submit) {
             medicineUpdate();
 
-            AlarmController alarmController
-                    = new AlarmController(getApplicationContext());
+            AlarmController alarmController = new AlarmController(getBaseContext());
             if(checkBoxBreakfast.isChecked() && checkBoxBreakfastAlarm.isChecked()) {
                 alarmController.startAlarm(breakfastAlarmTime.getTime());
             }

@@ -75,24 +75,24 @@ public class MedicineRecyclerViewAdapter
         holder.textDateTo.setText(
                 AppDateFormat.DATE_TO.format(medicineModel.getDateTo()));
 
-        if(whenModel.isBreakfast()) {
-            holder.whenBreakfastContainer.setVisibility(View.VISIBLE);
-            if(whenModel.isBreakfastAlarm()) {
-                holder.whenBreakfastAlarmImage.setImageResource(R.drawable.ic_notifications_black);
-            }
-        }
-        if(whenModel.isLunch()) {
-            holder.whenLunchContainer.setVisibility(View.VISIBLE);
-            if(whenModel.isLunchAlarm()) {
-                holder.whenLunchAlarmImage.setImageResource(R.drawable.ic_notifications_black);
-            }
-        }
-        if(whenModel.isDinner()) {
-            holder.whenDinnerContainer.setVisibility(View.VISIBLE);
-            if(whenModel.isDinnerAlarm()) {
-                holder.whenDinnerAlarmImage.setImageResource(R.drawable.ic_notifications_black);
-            }
-        }
+//        if(whenModel.isBreakfast()) {
+//            holder.whenBreakfastContainer.setVisibility(View.VISIBLE);
+//            if(whenModel.isBreakfastAlarm()) {
+//                holder.whenBreakfastAlarmImage.setImageResource(R.drawable.ic_notifications_black);
+//            }
+//        }
+//        if(whenModel.isLunch()) {
+//            holder.whenLunchContainer.setVisibility(View.VISIBLE);
+//            if(whenModel.isLunchAlarm()) {
+//                holder.whenLunchAlarmImage.setImageResource(R.drawable.ic_notifications_black);
+//            }
+//        }
+//        if(whenModel.isDinner()) {
+//            holder.whenDinnerContainer.setVisibility(View.VISIBLE);
+//            if(whenModel.isDinnerAlarm()) {
+//                holder.whenDinnerAlarmImage.setImageResource(R.drawable.ic_notifications_black);
+//            }
+//        }
     }
 
     @Override
@@ -118,19 +118,19 @@ public class MedicineRecyclerViewAdapter
             textDateFrom = itemView.findViewById(R.id.medicine_recycler_view_item_date_from);
             textDateTo = itemView.findViewById(R.id.medicine_recycler_view_item_date_to);
 
-            whenBreakfastContainer
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast);
-            whenLunchContainer
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch);
-            whenDinnerContainer
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner);
-
-            whenBreakfastAlarmImage
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast_alarm);
-            whenLunchAlarmImage
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch_alarm);
-            whenDinnerAlarmImage
-                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner_alarm);
+//            whenBreakfastContainer
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast);
+//            whenLunchContainer
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch);
+//            whenDinnerContainer
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner);
+//
+//            whenBreakfastAlarmImage
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_breakfast_alarm);
+//            whenLunchAlarmImage
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_lunch_alarm);
+//            whenDinnerAlarmImage
+//                    = itemView.findViewById(R.id.medicine_recycler_view_item_when_dinner_alarm);
         }
     }
 
