@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
 import com.ssangwoo.medicationalarm.views.fragments.MedicineRecyclerFragment;
 
@@ -45,10 +46,10 @@ public class MainActivity extends BaseToolbarActivity {
             public void onClick(View view) {
                 int requestCode = getResources().getInteger(R.integer.request_edit_medicine);
                 Intent intent = new Intent(getApplicationContext(),
-                        EditMedicineActivity.class);
-                MedicineModel medicineModel = new MedicineModel();
-                medicineModel.insert();
-                intent.putExtra("medicine_id", medicineModel.getId());
+                        MedicineEditActivity.class);
+                Medicine medicine = new Medicine();
+                medicine.insert();
+                intent.putExtra("medicine_id", medicine.getId());
                 mainFragment.startActivityForResult(intent, requestCode);
             }
         });
@@ -81,8 +82,9 @@ public class MainActivity extends BaseToolbarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_setting) {
             startActivity(new Intent(getApplicationContext(), SettingActivity.class));
+            return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override

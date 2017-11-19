@@ -17,9 +17,10 @@ import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.controllers.MedicineRecyclerViewAdapter;
-import com.ssangwoo.medicationalarm.models.MedicineModel;
-import com.ssangwoo.medicationalarm.models.MedicineModel_Table;
-import com.ssangwoo.medicationalarm.views.activities.EditMedicineActivity;
+import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
+import com.ssangwoo.medicationalarm.models.Medicine;
+import com.ssangwoo.medicationalarm.models.Medicine_Table;
+import com.ssangwoo.medicationalarm.views.activities.MedicineEditActivity;
 
 import java.util.List;
 
@@ -31,20 +32,9 @@ public class MedicineRecyclerFragment extends Fragment {
     public MedicineRecyclerFragment() {
         // Required empty public constructor
     }
-    public static MedicineRecyclerFragment newInstance() {
-        MedicineRecyclerFragment fragment = new MedicineRecyclerFragment();
-//        Bundle args = new Bundle();
-//        fragment.setArguments(args);
-        return fragment;
-    }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public static MedicineRecyclerFragment newInstance() {
+        return new MedicineRecyclerFragment();
     }
 
     @Override
@@ -64,10 +54,9 @@ public class MedicineRecyclerFragment extends Fragment {
 //        medicineModel.save();
 //        medicineModels.add(medicineModel);
         medicineRecyclerView = view.findViewById(R.id.medicine_recycler_view);
-        List<MedicineModel> medicineModels =
-                new Select().from(MedicineModel.class).queryList();
+        List<Medicine> medicineList = AppDatabaseDAO.selectMedicineList();
         medicineRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new MedicineRecyclerViewAdapter(this, medicineModels);
+        adapter = new MedicineRecyclerViewAdapter(this, medicineList);
         medicineRecyclerView.setAdapter(adapter);
         return view;
     }
@@ -83,9 +72,9 @@ public class MedicineRecyclerFragment extends Fragment {
     }
 
     private void remakeMedicineList() {
-        List<MedicineModel> medicineModels =
-                new Select().from(MedicineModel.class).queryList();
-        adapter = new MedicineRecyclerViewAdapter(this, medicineModels);
+        List<Medicine> medicineList =
+                new Select().from(Medicine.class).queryList();
+        adapter = new MedicineRecyclerViewAdapter(this, medicineList);
         medicineRecyclerView.setAdapter(adapter);
 //                adapter.notifyDataSetChanged();
     }
@@ -93,34 +82,36 @@ public class MedicineRecyclerFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         final int medicineId = adapter.getMedicineId();
-        MedicineModel medicineModel = new Select().from(MedicineModel.class)
-                .where(MedicineModel_Table.id.eq(medicineId)).querySingle();
-        if (medicineModel == null) {
+        Medicine medicine = new Select().from(Medicine.class)
+                .where(Medicine_Table.id.eq(medicineId)).querySingle();
+        if (medicine == null) {
             Toast.makeText(getContext(),
                     "약 정보를 불러올 수 없습니다!", Toast.LENGTH_SHORT).show();
         }
-        if(item.getItemId() == R.id.action_show_edit) {
-            Intent intent = new Intent(getContext(), EditMedicineActivity.class);
-            intent.putExtra("edit_medicine_id", medicineId);
-            startActivityForResult(intent, getResources().getInteger(R.integer.request_edit_medicine));
-        } else if (item.getItemId() == R.id.action_show_delete){
-            new AlertDialog.Builder(getContext())
-                    .setTitle(medicineModel.getTitle() + " 삭제")
-                    .setMessage(getString(R.string.show_delete_message))
-                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            new Delete().from(MedicineModel.class)
-                                    .where(MedicineModel_Table.id.eq(medicineId))
-                                    .execute();
-                            remakeMedicineList();
-                        }
-                    }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-            }).create().show();
+
+        switch (item.getItemId()) {
+            case R.id.action_show_edit:
+                Intent intent = new Intent(getContext(), MedicineEditActivity.class);
+                intent.putExtra("edit_medicine_id", medicineId);
+                startActivityForResult(intent, getResources().getInteger(R.integer.request_edit_medicine));
+                break;
+            case R.id.action_show_delete:
+                new AlertDialog.Builder(getContext())
+                        .setTitle(medicine.getTitle() + " 삭제")
+                        .setMessage(getString(R.string.show_delete_message))
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                AppDatabaseDAO.deleteMedicine(medicineId);
+                                remakeMedicineList();
+                            }
+                        }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                }).create().show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

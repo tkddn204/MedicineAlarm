@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#0190b0</color>
     <color name="colorAccent">#dbdaee</color>
     <color name="gray">#a0a0a0</color>
+    <color name="colorMedicineItemBackground">#EBEBEB</color>
 </resources>

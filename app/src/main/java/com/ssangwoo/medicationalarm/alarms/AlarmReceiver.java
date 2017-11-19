@@ -10,6 +10,8 @@ import android.widget.Toast;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.enums.NotificationActionEnum;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
+import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
+import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.models.MedicineModel;
 import com.ssangwoo.medicationalarm.models.WhenModel;
 import com.ssangwoo.medicationalarm.alarms.notifications.AlarmNotification;
@@ -35,12 +37,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         //new AlarmController(context).wakeupAlarm();
         //keepAlarm(intent);
         Toast.makeText(context, "알람울림!!!!", Toast.LENGTH_SHORT).show();
-        MedicineModel medicineModel =
-                new Select().from(MedicineModel.class).where().querySingle();
+        Medicine medicine = AppDatabaseDAO.selectMedicine(0);
         AlarmNotification alarmNotification
                 = new AlarmNotification(context);
-        alarmNotification.notify(MAGIC_NUMBER + medicineModel.getId(),
-                alarmNotification.makeNotification(medicineModel.getTitle(),
+        alarmNotification.notify(MAGIC_NUMBER + medicine.getId(),
+                alarmNotification.makeNotification(medicine.getTitle(),
                         "아침"));
 
         context.startService(new Intent(context, AlarmSoundService.class));

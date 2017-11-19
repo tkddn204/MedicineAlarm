@@ -5,16 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivityListener">
+    tools:context="com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity">
 
     <include layout="@layout/layout_toolbar"
         android:id="@+id/show_toolbar"/>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent">
     <TextView
         android:id="@+id/text_medicine_title"
         android:textStyle="bold"
         android:textSize="36sp"
-        android:layout_margin="16dp"
+        android:text="asfsdfasf"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    </FrameLayout>
+    <View
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <TextView
+        android:id="@+id/text_medicine_desc"
+        android:textSize="24sp"
+        android:text="asfsdfasf"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <View
@@ -22,8 +50,20 @@
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 
-    <FrameLayout
-        android:id="@+id/show_fragment_container"
+    <TextView
+        android:id="@+id/text_medicine_date"
+        android:textSize="24sp"
+        android:text="asfsdfasf"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
+    <View
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
 </LinearLayout>

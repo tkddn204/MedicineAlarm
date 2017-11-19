@@ -6,51 +6,35 @@ import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.models.MedicineModel;
-import com.ssangwoo.medicationalarm.models.MedicineModel_Table;
-import com.ssangwoo.medicationalarm.views.fragments.ShowMedicineRecyclerFragment;
+import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
+import com.ssangwoo.medicationalarm.models.Medicine;
 
-public class ShowMedicineActivityListener extends BaseToolbarWithBackButtonActivity
-        implements ShowMedicineRecyclerFragment.OnMedicineObjectListener {
+public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
 
-    ShowMedicineRecyclerFragment showFragment;
-
-    MedicineModel medicineModel;
+    Medicine medicine;
 
     @Override
     protected void setView() {
         super.setView();
         int medicineId = getIntent().getIntExtra("medicine_id", 0);
 
-        showFragment = ShowMedicineRecyclerFragment.newInstance(medicineId);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.show_fragment_container, showFragment)
-                .commit();
-    }
-
-    @Override
-    public void receive(MedicineModel medicineModel) {
-        this.medicineModel = medicineModel;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_show_edit) {
-            Intent intent = new Intent(this, EditMedicineActivity.class);
-            intent.putExtra("edit_medicine_id", medicineModel.getId());
+            Intent intent = new Intent(this, MedicineEditActivity.class);
+            intent.putExtra("edit_medicine_id", medicine.getId());
             startActivityForResult(intent, getResources().getInteger(R.integer.request_edit_medicine));
         } else if (item.getItemId() == R.id.action_show_delete){
             new AlertDialog.Builder(this)
-                    .setTitle(medicineModel.getTitle() + " 삭제")
+                    .setTitle(medicine.getTitle() + " 삭제")
                     .setMessage(getString(R.string.show_delete_message))
                     .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            new Delete().from(MedicineModel.class)
-                                    .where(MedicineModel_Table.id.eq(medicineModel.getId()))
-                                    .execute();
+                            AppDatabaseDAO.deleteMedicine(medicine.getId());
                             setResult(RESULT_OK);
                             finish();
                         }

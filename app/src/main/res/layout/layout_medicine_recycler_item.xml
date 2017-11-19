@@ -4,80 +4,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/medicine_recycler_view_item_container"
     android:layout_width="match_parent"
-    android:layout_height="320dp"
-    android:layout_marginBottom="@dimen/vertical_margin"
-    android:layout_marginEnd="@dimen/side_margin"
-    android:layout_marginLeft="@dimen/side_margin"
-    android:layout_marginRight="@dimen/side_margin"
-    android:layout_marginStart="@dimen/side_margin"
-    android:layout_marginTop="@dimen/vertical_margin"
-    android:background="@drawable/recycler_item_background_with_shadow">
+    android:layout_height="136dp"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/recycler_item_background">
+
+    <ImageView
+        android:id="@+id/image_medicine_recycler_view_item_alarm"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_notifications_none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_medicine_recycler_view_item_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="알람 없음"
+        app:layout_constraintEnd_toEndOf="@+id/image_medicine_recycler_view_item_alarm"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/image_medicine_recycler_view_item_alarm"
+        app:layout_constraintTop_toBottomOf="@+id/image_medicine_recycler_view_item_alarm" />
 
     <TextView
         android:id="@+id/medicine_recycler_view_item_title"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="dskfjdsafjdasf"
-        android:maxLines="1"
-        android:textAlignment="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:singleLine="true"
+        android:text="dskfjdsafjda"
         android:textColor="@android:color/black"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.25"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toStartOf="@+id/image_medicine_recycler_view_item_alarm"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/medicine_recycler_view_item_desc"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="dskfjdsafjdasf"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp"
         android:maxLines="2"
-        android:textAlignment="center"
         android:textColor="@color/gray"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.25"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/medicine_recycler_view_item_title"
-        app:layout_constraintVertical_bias="0.1" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/image_medicine_recycler_view_item_alarm"
+        app:layout_constraintStart_toStartOf="@+id/medicine_recycler_view_item_title"
+        app:layout_constraintTop_toBottomOf="@+id/medicine_recycler_view_item_title" />
 
     <TextView
-        android:id="@+id/medicine_recycler_view_item_date_to"
+        android:id="@+id/medicine_recycler_view_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="11월 11일부터 11월 11일까지"
         android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:text="11.11.11 ㅇㅇ"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/medicine_recycler_view_item_date_from"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:text="11.11.11 ㅇㅇ"
-        app:layout_constraintBottom_toTopOf="@+id/medicine_recycler_view_item_date_to"
-        app:layout_constraintStart_toStartOf="@+id/medicine_recycler_view_item_date_to" />
-
-    <ImageView
-        android:id="@+id/medicine_recycler_view_item_when_breakfast_alarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_notifications_none"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.85"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95" />
 
 </android.support.constraint.ConstraintLayout>
