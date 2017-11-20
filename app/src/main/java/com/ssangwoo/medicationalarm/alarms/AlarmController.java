@@ -29,13 +29,17 @@ public class AlarmController {
         this.context = context;
     }
 
-    public void startAlarm(long nextAlarmTime) {
+    public void startAlarm(long nextAlarmTime, int medicine_id, int alarm_id) {
         Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra("medicine_id", medicine_id);
+        intent.putExtra("alarm_id", alarm_id);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 context.getResources().getInteger(R.integer.request_medicine_broadcast),
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         AlarmManager alarmManager =
                 (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,

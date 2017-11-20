@@ -14,11 +14,11 @@ import android.widget.TextView;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.models.Medicine;
-import com.ssangwoo.medicationalarm.models.WhenModel;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by ssangwoo on 2017-10-29.
@@ -71,6 +71,13 @@ public class MedicineRecyclerViewAdapter
         String dateString = AppDateFormat.DATE_FROM.format(medicine.getDateFrom())
                 + " " + AppDateFormat.DATE_TO.format(medicine.getDateTo());
         holder.textDate.setText(dateString);
+
+        int numberOfAlarm = medicine.getAlarmList().size();
+        if(numberOfAlarm > 0) {
+            holder.imageAlarm.setImageResource(R.drawable.ic_alarm_on_black);
+            holder.textAlarm.setText(String.format(Locale.KOREA,
+                    "알람 %d개", numberOfAlarm));
+        }
     }
 
     @Override
@@ -81,8 +88,8 @@ public class MedicineRecyclerViewAdapter
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private ConstraintLayout container;
-        private TextView textTitle, textDesc;
-        private TextView textAlarm, textDate;
+        private TextView textTitle, textDesc, textDate;
+        private TextView textAlarm;
         private ImageView imageAlarm;
 
         public ViewHolder(Context context, ViewGroup parent) {
@@ -94,6 +101,7 @@ public class MedicineRecyclerViewAdapter
             textDesc = itemView.findViewById(R.id.medicine_recycler_view_item_desc);
             textDate = itemView.findViewById(R.id.medicine_recycler_view_item_date);
             imageAlarm = itemView.findViewById(R.id.image_medicine_recycler_view_item_alarm);
+            textAlarm = itemView.findViewById(R.id.text_medicine_recycler_view_item_alarm);
         }
     }
 

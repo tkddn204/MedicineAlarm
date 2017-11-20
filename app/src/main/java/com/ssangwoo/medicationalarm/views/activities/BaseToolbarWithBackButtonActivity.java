@@ -4,6 +4,7 @@ public abstract class BaseToolbarWithBackButtonActivity extends BaseToolbarActiv
 
     @Override
     protected void setView() {
+        super.setView();
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);

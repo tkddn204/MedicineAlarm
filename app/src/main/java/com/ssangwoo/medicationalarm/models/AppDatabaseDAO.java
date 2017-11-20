@@ -24,4 +24,15 @@ public class AppDatabaseDAO {
                 .where(Medicine_Table.id.eq(medicineId))
                 .execute();
     }
+
+    public static Alarm selectAlarm(int alarmId) {
+        return new Select().from(Alarm.class)
+                .where(Alarm_Table.id.eq(alarmId)).querySingle();
+    }
+
+    public static void deleteAlarm(int alarmId) {
+        new Delete().from(Alarm.class)
+                .where(Alarm_Table.id.eq(alarmId))
+                .execute();
+    }
 }

@@ -23,17 +23,16 @@ public class AlarmNotification extends ContextWrapper {
         this.managerCompat = NotificationManagerCompat.from(context);
     }
 
-    public NotificationCompat.Builder makeNotification(String title, String when) {
+    public NotificationCompat.Builder makeNotification(String title) {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "medicineAlarm");
 
-        String contentTitle = title + " " + when;
         String contentText = title + " 드실 시간입니다!";
 
         return builder
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setSmallIcon(R.drawable.ic_alarm_small)
-                .setContentTitle(contentTitle)
+                .setContentTitle(title)
                 .setContentText(contentText)
                 .setSubText("밑으로 슬라이드!")
                 .setDefaults(Notification.DEFAULT_ALL)

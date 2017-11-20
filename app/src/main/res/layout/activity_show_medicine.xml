@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,60 +9,131 @@
     <include layout="@layout/layout_toolbar"
         android:id="@+id/show_toolbar"/>
 
-    <FrameLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent">
-    <TextView
-        android:id="@+id/text_medicine_title"
-        android:textStyle="bold"
-        android:textSize="36sp"
-        android:text="asfsdfasf"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="4dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    </FrameLayout>
-    <View
-        android:background="@color/colorPrimaryDark"
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />
 
-    <TextView
-        android:id="@+id/text_medicine_desc"
-        android:textSize="24sp"
-        android:text="asfsdfasf"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/text_medicine_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="50dp"
+            android:paddingEnd="16dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:paddingBottom="4dp"
+            android:text="asfsdfasf"
+            android:textSize="36sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_medicine_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:paddingBottom="8dp"
+            android:text="asfsdfasf"
+            android:textSize="24sp"
+            android:textColor="@color/gray"/>
+    </LinearLayout>
+
     <View
-        android:background="@color/colorPrimaryDark"
         android:layout_width="match_parent"
-        android:layout_height="1dp" />
+        android:layout_height="1dp"
+        android:background="@color/colorPrimaryDark" />
 
     <TextView
         android:id="@+id/text_medicine_date"
-        android:textSize="24sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingBottom="8dp"
         android:text="asfsdfasf"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:textSize="24sp"
+        android:textColor="@android:color/black"/>
+
     <View
-        android:background="@color/colorPrimaryDark"
         android:layout_width="match_parent"
-        android:layout_height="1dp" />
+        android:layout_height="1dp"
+        android:background="@color/colorPrimaryDark" />
+
+    <RelativeLayout
+        android:id="@+id/alarm_select_container"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="@string/text_alarm_select"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/text_kind_of_alarm"
+            android:text="@string/alarm_default"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimaryDark" />
+
+    <RelativeLayout
+        android:background="@color/colorAccent"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/text_alarm_list_header"
+            android:text="@string/text_alarm_list"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/image_add_alarm"
+            android:src="@drawable/ic_add"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/show_alarm_recycler_view"
+        android:background="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

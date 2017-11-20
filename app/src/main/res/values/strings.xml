@@ -26,9 +26,12 @@
     <string name="show_delete_message">정말 삭제하시겠습니까? 약의 정보가 모두 삭제됩니다.</string>
     <string name="main_edit">약 편집</string>
     <string name="text_edit_title">약 이름</string>
-    <string name="text_edit_title_example">감기약</string>
+    <string name="text_edit_title_example">약 이름을 적어주세요.</string>
     <string name="text_edit_desc">약 설명</string>
-    <string name="text_edit_desc_example">꼬박꼬박 챙겨먹어야지!</string>
+    <string name="text_edit_desc_example">약 설명을 적어주세요.</string>
     <string name="text_date">복약기간</string>
+    <string name="text_alarm_select">알람 종류</string>
+    <string name="alarm_default">기본</string>
+    <string name="text_alarm_list">알람 목록</string>
 
 </resources>
