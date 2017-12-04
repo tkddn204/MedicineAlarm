@@ -41,5 +41,8 @@
     <string name="alarm_delete_question">알람을 삭제하시겠습니까?</string>
     <string name="alarm_delete_yes">삭제하기</string>
     <string name="alarm_delete_cancel">취소</string>
+    <string name="close_dialog">닫기</string>
+    <string name="error_date_from">언제까지의 날짜를 이후로 설정할 수 없습니다!</string>
+    <string name="error_date_to">언제부터의 날짜 전으로 설정할 수 없습니다!</string>
 
 </resources>

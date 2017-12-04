@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.activities.MedicineEditActivity"/>
+        <activity android:name=".views.activities.EditMedicineActivity"/>
         <activity android:name=".views.activities.SettingActivity" />
         <activity android:name=".views.activities.ShowMedicineActivity" />
 

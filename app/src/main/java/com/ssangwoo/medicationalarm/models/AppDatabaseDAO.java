@@ -37,13 +37,14 @@ public class AppDatabaseDAO {
     }
 
     public static List<Alarm> selectAlarmList() {
-        return new Select().from(Alarm.class).queryList();
+        return new Select().from(Alarm.class)
+                .orderBy(Alarm_Table.date, true).queryList();
     }
 
     public static List<Alarm> selectAlarmList(int medicineId) {
         return new Select().from(Alarm.class)
                 .where(Alarm_Table.medicine_id.eq(medicineId))
-                .queryList();
+                .orderBy(Alarm_Table.date, truea).queryList();
     }
 
     public static void nextAlarmUpdate(Alarm alarm) {

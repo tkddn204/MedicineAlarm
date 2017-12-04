@@ -1,8 +1,11 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,14 +24,11 @@ import com.ssangwoo.medicationalarm.util.AppDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
-        implements View.OnClickListener {
+public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
+        implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
     EditText editTitle, editDesc;
     TextView textEditDateFrom, textEditDateTo;
-
-    Date dateFrom = new Date();
-    Date dateTo = new Date(AppDateFormat.DATE_AFTER_SEVEN_DAYS);
 
     int medicineId;
     Medicine medicine;
@@ -40,7 +40,7 @@ public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
         if (getIntent().hasExtra("edit_medicine_id")) {
             medicineId = getIntent().getIntExtra("edit_medicine_id", -1);
             medicine = AppDatabaseDAO.selectMedicine(medicineId);
-            if(medicine != null) {
+            if (medicine != null) {
                 editTitle.setText(medicine.getTitle());
                 editDesc.setText(medicine.getDescription());
 
@@ -51,11 +51,10 @@ public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
             }
         } else {
             medicineId = getIntent().getIntExtra("medicine_id", -1);
-            medicine = new Select().from(Medicine.class)
-                    .where(Medicine_Table.id.eq(medicineId)).querySingle();
-            if(medicine != null) {
-                textEditDateFrom.setText(AppDateFormat.DATE_FROM.format(dateFrom));
-                textEditDateTo.setText(AppDateFormat.DATE_TO.format(dateTo));
+            medicine = AppDatabaseDAO.selectMedicine(medicineId);
+            if (medicine != null) {
+                textEditDateFrom.setText(AppDateFormat.DATE_FROM.format(medicine.getDateFrom()));
+                textEditDateTo.setText(AppDateFormat.DATE_TO.format(medicine.getDateTo()));
             }
         }
 
@@ -63,40 +62,35 @@ public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
         textEditDateTo.setOnClickListener(this);
     }
 
-    private Date editWhenDate(int year, int month, int day) {
+    private Date editWhenDate(int year, int month, int day, boolean isFrom) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day);
+        if (isFrom) {
+            calendar.set(year, month, day, 0, 0, 0);
+        } else {
+            calendar.set(year, month, day, 23, 59, 59);
+        }
         return calendar.getTime();
     }
 
+
+    private boolean isFrom;
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.edit_text_date_from:
-                onClickEditDate(new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        dateFrom = editWhenDate(year, month, day);
-                        textEditDateFrom.setText(
-                                AppDateFormat.DATE_FROM.format(dateFrom));
-                    }
-                });
+                isFrom = true;
+                onClickEditDate(medicine.getDateFrom());
                 break;
             case R.id.edit_text_date_to:
-                onClickEditDate(new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        dateTo = editWhenDate(year, month, day);
-                        textEditDateTo.setText(
-                                AppDateFormat.DATE_TO.format(dateTo));
-                    }
-                });
+                isFrom = false;
+                onClickEditDate(medicine.getDateTo());
                 break;
         }
     }
 
-    private void onClickEditDate(DatePickerDialog.OnDateSetListener dateSetListener) {
+    private void onClickEditDate(Date editDate) {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(editDate);
         Context context;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             context = new ContextThemeWrapper(
@@ -105,22 +99,61 @@ public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
             context = this;
         }
         DatePickerDialog datePickerDialog = new DatePickerDialog(
-                context, dateSetListener,
+                context, this,
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        Date pickDate = editWhenDate(year, month, day, isFrom);
+        if(isFrom) {
+            if (medicine.getDateTo().before(pickDate)) {
+                makeAlertDialog(getString(R.string.error_date_from));
+                return;
+            }
+            medicine.setDateFrom(pickDate);
+            textEditDateFrom.setText(
+                    AppDateFormat.DATE_FROM.format(pickDate));
+        } else {
+            if (medicine.getDateTo().after(pickDate)) {
+                makeAlertDialog(getString(R.string.error_date_to));
+                return;
+            }
+            medicine.setDateTo(pickDate);
+            textEditDateTo.setText(
+                    AppDateFormat.DATE_TO.format(pickDate));
+        }
+
+    }
+
+    private void makeAlertDialog(String message) {
+        new AlertDialog.Builder(EditMedicineActivity.this)
+                .setMessage(message)
+                .setPositiveButton(getText(R.string.close_dialog),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if(isFrom) {
+                                    onClickEditDate(medicine.getDateFrom());
+                                } else {
+                                    onClickEditDate(medicine.getDateTo());
+                                }
+                                dialogInterface.cancel();
+                            }
+                        })
+                .create().show();
+    }
+
     private void medicineUpdate() {
-        if(editTitle.getText().toString().isEmpty() &&
+        if (editTitle.getText().toString().isEmpty() &&
                 editDesc.getText().toString().isEmpty()) {
             AppDatabaseDAO.deleteMedicine(medicineId);
         }
         medicine.setTitle(editTitle.getText().toString());
         medicine.setDescription(editDesc.getText().toString());
-        medicine.setDateFrom(dateFrom);
-        medicine.setDateTo(dateTo);
         medicine.setModifiedDate(new Date());
         medicine.update();
     }
@@ -152,7 +185,7 @@ public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_edit_done) {
+        if (item.getItemId() == R.id.action_edit_done) {
             onBackPressed();
             return true;
         }
@@ -175,6 +208,7 @@ public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
     @Override
     public void onBackPressed() {
         medicineUpdate();
+        setResult(RESULT_OK);
         super.onBackPressed();
     }
 }

@@ -19,7 +19,7 @@ import com.ssangwoo.medicationalarm.controllers.MedicineRecyclerViewAdapter;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.models.Medicine_Table;
-import com.ssangwoo.medicationalarm.views.activities.MedicineEditActivity;
+import com.ssangwoo.medicationalarm.views.activities.EditMedicineActivity;
 
 import java.util.List;
 
@@ -90,7 +90,7 @@ public class MedicineRecyclerFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_show_edit:
-                Intent intent = new Intent(getContext(), MedicineEditActivity.class);
+                Intent intent = new Intent(getContext(), EditMedicineActivity.class);
                 intent.putExtra("edit_medicine_id", medicineId);
                 startActivityForResult(intent, getResources().getInteger(R.integer.request_edit_medicine));
                 break;

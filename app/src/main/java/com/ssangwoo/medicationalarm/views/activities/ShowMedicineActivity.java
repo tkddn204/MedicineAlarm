@@ -62,7 +62,7 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_show_edit) {
-            Intent intent = new Intent(this, MedicineEditActivity.class);
+            Intent intent = new Intent(this, EditMedicineActivity.class);
             intent.putExtra("edit_medicine_id", medicine.getId());
             startActivityForResult(intent, getResources().getInteger(R.integer.request_edit_medicine));
         } else if (item.getItemId() == R.id.action_show_delete){
@@ -92,6 +92,7 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == getResources().getInteger(R.integer.request_edit_medicine)) {
             if (resultCode == RESULT_OK) {
+                medicine = AppDatabaseDAO.selectMedicine(medicine.getId());
                 setView();
                 setResult(RESULT_OK);
             }

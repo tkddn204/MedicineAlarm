@@ -37,12 +37,6 @@
         android:textColor="@color/gray"
         android:textSize="24sp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/light_gray" />
-
     <TextView
         android:id="@+id/text_medicine_date"
         android:layout_width="match_parent"
@@ -60,7 +54,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/light_gray" />
+        android:background="@color/colorPrimaryDark" />
 
     <RelativeLayout
         android:layout_width="match_parent"

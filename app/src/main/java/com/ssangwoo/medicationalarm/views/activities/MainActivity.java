@@ -10,7 +10,6 @@ import android.view.View;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.models.Medicine;
-import com.ssangwoo.medicationalarm.models.MedicineModel;
 import com.ssangwoo.medicationalarm.views.fragments.MedicineRecyclerFragment;
 
 public class MainActivity extends BaseToolbarActivity {
@@ -46,7 +45,7 @@ public class MainActivity extends BaseToolbarActivity {
             public void onClick(View view) {
                 int requestCode = getResources().getInteger(R.integer.request_edit_medicine);
                 Intent intent = new Intent(getApplicationContext(),
-                        MedicineEditActivity.class);
+                        EditMedicineActivity.class);
                 Medicine medicine = new Medicine();
                 medicine.insert();
                 intent.putExtra("medicine_id", medicine.getId());
