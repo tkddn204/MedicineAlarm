@@ -74,7 +74,7 @@ public class MedicineRecyclerViewAdapter
 
         int numberOfAlarm = medicine.getAlarmList().size();
         if(numberOfAlarm > 0) {
-            holder.imageAlarm.setImageResource(R.drawable.ic_alarm_on_black);
+            holder.imageAlarm.setImageResource(R.drawable.ic_alarm_black);
             holder.textAlarm.setText(String.format(Locale.KOREA,
                     "알람 %d개", numberOfAlarm));
         }

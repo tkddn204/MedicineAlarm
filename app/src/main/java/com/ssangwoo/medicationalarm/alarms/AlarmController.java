@@ -10,10 +10,13 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.models.Alarm;
+import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by ssangwoo on 2017-11-02.
@@ -29,9 +32,8 @@ public class AlarmController {
         this.context = context;
     }
 
-    public void startAlarm(long nextAlarmTime, int medicine_id, int alarm_id) {
+    public void startAlarm(long nextAlarmTime, int alarm_id) {
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("medicine_id", medicine_id);
         intent.putExtra("alarm_id", alarm_id);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 context.getResources().getInteger(R.integer.request_medicine_broadcast),
@@ -88,4 +90,11 @@ public class AlarmController {
         context.stopService(new Intent(context, AlarmSoundService.class));
     }
 
+    public void resetAlarm() {
+        List<Alarm> alarmList = AppDatabaseDAO.selectAlarmList();
+        for(Alarm alarm: alarmList) {
+            AppDatabaseDAO.nextAlarmUpdate(alarm.getId());
+            startAlarm(alarm.getDate().getTime(), alarm.getId());
+        }
+    }
 }

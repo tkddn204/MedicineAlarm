@@ -1,21 +1,15 @@
 package com.ssangwoo.medicationalarm.controllers;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.util.Log;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.controllers.interfaces.UpdateAlarmRecyclerInterface;
+import com.ssangwoo.medicationalarm.controllers.viewHolders.AlarmAddItemViewHolder;
+import com.ssangwoo.medicationalarm.controllers.viewHolders.AlarmItemViewHolder;
+import com.ssangwoo.medicationalarm.controllers.viewHolders.BindingViewHolder;
 import com.ssangwoo.medicationalarm.models.Alarm;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
-import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.List;
 
@@ -24,82 +18,54 @@ import java.util.List;
  */
 
 public class AlarmRecyclerViewAdapter
-        extends RecyclerView.Adapter<AlarmRecyclerViewAdapter.ViewHolder> {
+        extends RecyclerView.Adapter<BindingViewHolder>
+        implements UpdateAlarmRecyclerInterface {
+    private static final int LIST_ADD_ITEM = 10;
 
     private List<Alarm> alarmList;
-    private Context context;
 
-    public AlarmRecyclerViewAdapter(Context context, List<Alarm> alarmList) {
-        this.context = context;
+    public AlarmRecyclerViewAdapter(List<Alarm> alarmList) {
         this.alarmList = alarmList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(parent.getContext(), parent);
+    public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case LIST_ADD_ITEM:
+                return new AlarmAddItemViewHolder(parent.getContext(), parent,
+                        this);
+            default:
+                return new AlarmItemViewHolder(parent.getContext(), parent,
+                        this);
+        }
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Alarm alarm = alarmList.get(position);
-        holder.alarmItemContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: 알람 편집
-            }
-        });
+    public int getItemViewType(int position) {
+        if(!alarmList.isEmpty() && position == getItemCount() - 1) {
+            return LIST_ADD_ITEM;
+        } else {
+            return super.getItemViewType(position);
+        }
+    }
 
-        holder.alarmItemContainer.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                new AlertDialog.Builder(context)
-                        .setTitle(alarm.getName() + " 삭제")
-                        .setMessage(alarm.getName() + "을 삭제하시겠습니까?")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                AppDatabaseDAO.deleteAlarm(alarm.getId());
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // nothing
-                            }
-                        }).create().show();
-                return true;
-            }
-        });
-
-        holder.imageAlarmHamburger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        holder.textAlarmName.setText(alarm.getName());
-        holder.textAlarmTime.setText(AppDateFormat.ALARM_TIME.format(alarm.getDate()));
+    @Override
+    public void onBindViewHolder(BindingViewHolder holder, int position) {
+        if(getItemViewType(position) == LIST_ADD_ITEM) {
+            ((AlarmAddItemViewHolder) holder).bindViewHolder(alarmList.get(0).getMedicine());
+        } else {
+            ((AlarmItemViewHolder) holder).bindViewHolder(alarmList.get(position));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return alarmList.size();
+        return alarmList.isEmpty() ? 0 : alarmList.size() + 1;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        private RelativeLayout alarmItemContainer;
-        private ImageView imageAlarmHamburger;
-        private TextView textAlarmName, textAlarmTime;
-
-        public ViewHolder(Context context, ViewGroup parent) {
-            super(LayoutInflater.from(context)
-                    .inflate(R.layout.layout_alarm_recycler_item,
-                            parent, false));
-            alarmItemContainer = itemView.findViewById(R.id.alarm_item_container);
-            imageAlarmHamburger = itemView.findViewById(R.id.image_alarm_hamburger);
-            textAlarmName = itemView.findViewById(R.id.text_alarm_name);
-            textAlarmTime = itemView.findViewById(R.id.text_alarm_time);
-        }
+    @Override
+    public void update(int medicineId) {
+        this.alarmList = AppDatabaseDAO.selectAlarmList(medicineId);
+        notifyDataSetChanged();
     }
 }

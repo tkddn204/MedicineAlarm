@@ -32,6 +32,12 @@
             android:exported="true" />
 
         <receiver android:name=".alarms.AlarmReceiver" />
+        <receiver android:name=".alarms.AlarmBootReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

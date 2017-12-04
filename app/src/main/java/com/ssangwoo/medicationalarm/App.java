@@ -1,7 +1,6 @@
 package com.ssangwoo.medicationalarm;
 
 import android.app.Application;
-import android.os.Parcelable;
 
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;

@@ -87,8 +87,8 @@ public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                         dateTo = editWhenDate(year, month, day);
-                        textEditDateFrom.setText(
-                                AppDateFormat.DATE_FROM.format(dateTo));
+                        textEditDateTo.setText(
+                                AppDateFormat.DATE_TO.format(dateTo));
                     }
                 });
                 break;
@@ -124,6 +124,7 @@ public class MedicineEditActivity extends BaseToolbarWithBackButtonActivity
         medicine.setModifiedDate(new Date());
         medicine.update();
     }
+
     @Override
     protected void initView() {
         super.initView();

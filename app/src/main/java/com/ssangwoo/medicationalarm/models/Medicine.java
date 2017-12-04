@@ -84,7 +84,7 @@ public class Medicine extends BaseModel {
         this.dateTo = dateTo;
     }
 
-    @OneToMany(methods = OneToMany.Method.ALL, variableName = "alarmList")
+    @OneToMany(methods = OneToMany.Method.ALL)
     public List<Alarm> getAlarmList() {
         if (alarmList == null || alarmList.isEmpty()) {
             alarmList = new Select()

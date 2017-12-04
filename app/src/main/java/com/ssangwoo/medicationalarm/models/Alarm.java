@@ -2,12 +2,17 @@ package com.ssangwoo.medicationalarm.models;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -24,21 +29,25 @@ public class Alarm extends BaseModel {
     Medicine medicine;
 
     @Column
-    String name;
+    Date date = new Date();
 
     @Column
-    Date date = new Date();
+    int hour;
+
+    @Column
+    int minutes;
 
     @Column(name = "enable")
     boolean isEnable = true;
 
+    List<AlarmInfo> alarmInfoList;
+
     public Alarm() {}
 
-    public Alarm(Medicine medicine, String name, Date date, boolean isEnable) {
+    public Alarm(Medicine medicine, int hour, int minutes) {
         this.medicine = medicine;
-        this.name = name;
-        this.date = date;
-        this.isEnable = isEnable;
+        this.hour = hour;
+        this.minutes = minutes;
     }
 
     public int getId() {
@@ -53,14 +62,6 @@ public class Alarm extends BaseModel {
         this.medicine = medicine;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Date getDate() {
         return date;
     }
@@ -69,12 +70,43 @@ public class Alarm extends BaseModel {
         this.date = date;
     }
 
+    public int getHour() {
+        return hour;
+    }
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
+    }
+
     public boolean isEnable() {
         return isEnable;
     }
 
     public void setEnable(boolean enable) {
         isEnable = enable;
+    }
+
+    @OneToMany(methods = OneToMany.Method.ALL)
+    public List<AlarmInfo> getAlarmInfoList() {
+        if (alarmInfoList == null || alarmInfoList.isEmpty()) {
+            alarmInfoList = new Select()
+                    .from(AlarmInfo.class)
+                    .where(AlarmInfo_Table.alarm_id.eq(id))
+                    .queryList();
+        }
+        return alarmInfoList;
+    }
+
+    public void setAlarmInfoList(List<AlarmInfo> alarmInfoList) {
+        this.alarmInfoList = alarmInfoList;
     }
 
     @Override
