@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context="com.ssangwoo.medicationalarm.views.activities.SettingActivity">
+    tools:context=".views.activities.SettingActivity">
 
-    <include layout="@layout/layout_toolbar"
-        android:id="@+id/setting_toolbar" />
+    <include
+        android:id="@+id/settings_toolbar"
+        layout="@layout/layout_toolbar" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/setting_recycler_view"
+    <FrameLayout
+        android:id="@+id/setting_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 </LinearLayout>

@@ -1,53 +1,70 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.RingtonePreference;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.MenuItem;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.controllers.SettingRecyclerViewAdapter;
+import com.ssangwoo.medicationalarm.views.fragments.SettingFragment;
 
-import java.util.ArrayList;
-
-public class SettingActivity extends BaseToolbarWithBackButtonActivity {
-
-    RecyclerView settingRecyclerView;
+public class SettingActivity extends AppCompatPreferenceActivity {
 
     @Override
-    protected void setView() {
-        super.setView();
-        settingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_setting);
+        setupActionBar();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.setting_fragment_container,
+                        SettingFragment.newInstance())
+                .commit();
+    }
 
-        ArrayList<String> settingList = new ArrayList<>();
-        settingList.add("알람");
-        settingList.add("알람표시방법");
-        settingRecyclerView.setAdapter(
-                new SettingRecyclerViewAdapter(this, settingList));
+    private void setupActionBar() {
+        Toolbar toolbar = findViewById(R.id.settings_toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
-    protected String setToolbarTitle() {
-        return getString(R.string.main_setting);
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            if (!super.onMenuItemSelected(featureId, item)) {
+                NavUtils.navigateUpFromSameTask(this);
+            }
+            return true;
+        }
+        return super.onMenuItemSelected(featureId, item);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected int setToolbarViewId() {
-        return R.id.setting_toolbar;
+    public boolean onIsMultiPane() {
+        return isXLargeTablet(this);
     }
 
-    @Override
-    protected int setContentViewRes() {
-        return R.layout.activity_setting;
-    }
-
-    @Override
-    protected void initView() {
-        super.initView();
-        settingRecyclerView = findViewById(R.id.setting_recycler_view);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+    private static boolean isXLargeTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 }

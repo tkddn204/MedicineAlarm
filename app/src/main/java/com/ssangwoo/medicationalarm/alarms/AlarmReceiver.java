@@ -3,18 +3,19 @@ package com.ssangwoo.medicationalarm.alarms;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
+import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.enums.NotificationActionEnum;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 import com.ssangwoo.medicationalarm.models.Alarm;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
-import com.ssangwoo.medicationalarm.models.MedicineModel;
 import com.ssangwoo.medicationalarm.alarms.notifications.AlarmNotification;
-import com.ssangwoo.medicationalarm.alarms.notifications.KeepNotification;
 import com.ssangwoo.medicationalarm.alarms.notifications.RemoteViewsFactory;
+import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.Calendar;
 
@@ -23,59 +24,70 @@ import java.util.Calendar;
  */
 
 public class AlarmReceiver extends BroadcastReceiver {
-    private static final int MAGIC_NUMBER = 5378;
 
     public AlarmReceiver() {
         super();
     }
 
-    Context context;
+    private Context context;
+
+    private int alarmId;
+    private Medicine medicine;
+    private AlarmNotification alarmNotification;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
         AlarmController alarmController = new AlarmController(context);
         alarmController.wakeupAlarm();
-        //keepAlarm(intent);
-        int alarmId = intent.getIntExtra("alarm_id", -1);
+
+        alarmId = intent.getIntExtra("alarm_id", -1);
         Alarm alarm = AppDatabaseDAO.selectAlarm(alarmId);
-        Medicine medicine = alarm.getMedicine();
+        medicine = alarm.getMedicine();
+        alarmNotification = new AlarmNotification(context);
 
-        AlarmNotification alarmNotification
-                = new AlarmNotification(context);
-        alarmNotification.notify(MAGIC_NUMBER + medicine.getId(),
-                alarmNotification.makeNotification(medicine.getTitle()));
-
-        context.startService(new Intent(context, AlarmSoundService.class));
-
-        AppDatabaseDAO.nextAlarmUpdate(alarmId);
-        alarmController.startAlarm(alarm.getDate().getTime(), alarmId);
+        String action = intent.getAction();
+        if (action != null) {
+            if (action.equals(NotificationActionEnum.TAKE_BUTTON_CLICK_ACTION.getAction())) {
+                // 복용
+                AppDatabaseDAO.updateTakeMedicine(
+                        AppDatabaseDAO.selectTodayAlarmInfo(alarmId), TakeMedicineEnum.TAKE);
+                alarmNotification.cancel(
+                        context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
+                                * (medicine.getId()+1) * (alarmId+1));
+            } else if (action.equals(NotificationActionEnum.DO_NOT_TAKE_BUTTON_CLICK_ACTION.getAction())) {
+                // 미복용
+                AppDatabaseDAO.updateTakeMedicine(
+                        AppDatabaseDAO.selectTodayAlarmInfo(alarmId), TakeMedicineEnum.DO_NOT_TAKE);
+                alarmNotification.cancel(
+                        context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
+                                * (medicine.getId()+1) * (alarmId+1));
+            } else if (action.equals(NotificationActionEnum.RE_ALARM_BUTTON_CLICK_ACTION.getAction())) {
+                // 다시알림
+                // TODO : 다시알림 설정에 들어가서 바꾸는거
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MINUTE, 10);
+                alarmController.startAlarm(calendar.getTimeInMillis(), medicine.getId(), alarmId);
+                Toast.makeText(context, String.format(
+                        context.getString(R.string.re_alarm_toast), 10), Toast.LENGTH_SHORT).show();
+                alarmNotification.cancel(
+                        context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
+                                * (medicine.getId()+1) * (alarmId+1));
+                return;
+            }
+        } else {
+            context.startService(new Intent(context, AlarmSoundService.class));
+            firstNotificationAlarm();
+        }
+        AppDatabaseDAO.nextAlarmDateUpdate(alarm);
+        alarmController.resetAlarm();
+        //alarmController.startAlarm(alarm.getDate().getTime(), alarmId);
     }
 
-    private void keepAlarm(Intent intent) {
-        /*KeepNotification keepAlarmNotification
-                = new KeepNotification(context);
-
-        int id;
-        TakeMedicineEnum takeMedicine;
-
-        MedicineModel medicineModel =
-                new Select().from(MedicineModel.class).where().querySingle();
-
-        if (intent.getAction() != null) {
-            String action = intent.getAction();
-            if(action.equals(NotificationActionEnum.BREAKFAST_BUTTON_CLICK_ACTION.getAction())) {
-                id = NotificationActionEnum.BREAKFAST_BUTTON_CLICK_ACTION.getMappingId();
-            } else if(action.equals(NotificationActionEnum.LUNCH_BUTTON_CLICK_ACTION.getAction())) {
-                id = NotificationActionEnum.LUNCH_BUTTON_CLICK_ACTION.getMappingId();
-            } else if(action.equals(NotificationActionEnum.DINNER_BUTTON_CLICK_ACTION.getAction())) {
-                id = NotificationActionEnum.DINNER_BUTTON_CLICK_ACTION.getMappingId();
-            }
-        }
-
-        RemoteViews remoteViews = new RemoteViewsFactory(context).makeRemoteViews();
-
-        keepAlarmNotification.notify(MAGIC_NUMBER + medicineModel.getId(),
-                keepAlarmNotification.makeNotification(remoteViews));*/
+    private void firstNotificationAlarm() {
+        alarmNotification.notify(
+                context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
+                        * (medicine.getId()+1) * (alarmId+1),
+                alarmNotification.makeNotification(medicine.getTitle(), medicine.getId(), alarmId));
     }
 }

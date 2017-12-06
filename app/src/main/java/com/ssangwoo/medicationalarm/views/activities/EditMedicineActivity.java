@@ -45,16 +45,16 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
                 editDesc.setText(medicine.getDescription());
 
                 textEditDateFrom.setText(
-                        AppDateFormat.DATE_FROM.format(medicine.getDateFrom()));
+                        AppDateFormat.DATE_YEAR_FROM.format(medicine.getDateFrom()));
                 textEditDateTo.setText(
-                        AppDateFormat.DATE_TO.format(medicine.getDateTo()));
+                        AppDateFormat.DATE_YEAR_TO.format(medicine.getDateTo()));
             }
         } else {
             medicineId = getIntent().getIntExtra("medicine_id", -1);
             medicine = AppDatabaseDAO.selectMedicine(medicineId);
             if (medicine != null) {
-                textEditDateFrom.setText(AppDateFormat.DATE_FROM.format(medicine.getDateFrom()));
-                textEditDateTo.setText(AppDateFormat.DATE_TO.format(medicine.getDateTo()));
+                textEditDateFrom.setText(AppDateFormat.DATE_YEAR_FROM.format(medicine.getDateFrom()));
+                textEditDateTo.setText(AppDateFormat.DATE_YEAR_TO.format(medicine.getDateTo()));
             }
         }
 
@@ -116,7 +116,7 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
             }
             medicine.setDateFrom(pickDate);
             textEditDateFrom.setText(
-                    AppDateFormat.DATE_FROM.format(pickDate));
+                    AppDateFormat.DATE_YEAR_FROM.format(pickDate));
         } else {
             if (medicine.getDateTo().after(pickDate)) {
                 makeAlertDialog(getString(R.string.error_date_to));
@@ -124,7 +124,7 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
             }
             medicine.setDateTo(pickDate);
             textEditDateTo.setText(
-                    AppDateFormat.DATE_TO.format(pickDate));
+                    AppDateFormat.DATE_YEAR_TO.format(pickDate));
         }
 
     }

@@ -1,19 +1,26 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.alarms.AlarmController;
+import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.views.fragments.MedicineRecyclerFragment;
 
 public class MainActivity extends BaseToolbarActivity {
 
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 1010;
     AppBarLayout appBarLayout;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton floatingActionButton;
@@ -52,6 +59,9 @@ public class MainActivity extends BaseToolbarActivity {
                 mainFragment.startActivityForResult(intent, requestCode);
             }
         });
+
+        requestPermission();
+        new AlarmController(getApplicationContext()).resetAlarm();
     }
 
     @Override
@@ -91,5 +101,42 @@ public class MainActivity extends BaseToolbarActivity {
         getMenuInflater().inflate(R.menu.menu_main_toolbar_action, menu);
         // MenuItem item = menu.findItem(R.id.action_setting);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void requestPermission() {
+        // Activity에서 실행하는경우
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL);
+//
+//            // 이 권한을 필요한 이유를 설명해야하는가?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//
+//            } else {
+//
+//
+//            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // 권한 허가
+                    // 해당 권한을 사용해서 작업을 진행할 수 있습니다
+                } else {
+                    // 권한 거부
+                    // 사용자가 해당권한을 거부했을때 해주어야 할 동작을 수행합니다
+                }
+                return;
+        }
     }
 }

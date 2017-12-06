@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.alarms.AlarmController;
 import com.ssangwoo.medicationalarm.controllers.interfaces.UpdateAlarmRecyclerInterface;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 import com.ssangwoo.medicationalarm.models.Alarm;
@@ -54,32 +56,62 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
     @Override
     public void bindViewHolder(Alarm alarm) {
         this.alarm = alarm;
-        setAlarmEnable(alarm.isEnable());
+        setAlarmEnable(alarm.isEnable(), true);
         alarmItemContainer.setOnClickListener(this);
         alarmItemContainer.setOnLongClickListener(this);
 
+        setAlarmEnable(alarm.isEnable(), true);
         imageAlarmSwitch.setOnClickListener(this);
 
         textAlarmTime.setText(AppDateFormat.ALARM_TIME.format(alarm.getDate()));
 
+        setTakeMedicineState();
         imageTakeMedicine.setOnClickListener(this);
+        //TODO : 알람 누르는 거에 따라 바뀌는 옵저버 달아주기
+    }
 
+    private void setTakeMedicineState() {
+        AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarm.getId());
+        TakeMedicineEnum currentTakeMedicineEnum
+                = TakeMedicineEnum.values()[alarmInfo.getTakeMedicine().ordinal()];
+        imageTakeMedicine.setImageResource(currentTakeMedicineEnum.getImageRes());
     }
 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.alarm_item_container) {
+            // TODO : 알람 없애기 - 리셋에서 isEnable 체크 외에 많은것
             new EditAlarmTimeDialog(context, alarm.getMedicine(),
                     updateInterface).make(alarm);
         } else if(view.getId() == R.id.image_alarm_switch) {
-            setAlarmEnable(!alarm.isEnable());
+            setAlarmEnable(!alarm.isEnable(), false);
         } else if(view.getId() == R.id.image_alarm_take_medicine) {
             nextTakeMedicineState();
         }
     }
 
-    private void setAlarmEnable(boolean alarmEnable) {
+    private void setAlarmEnable(boolean alarmEnable, boolean isInit) {
         alarm.setEnable(alarmEnable);
+        AlarmController alarmController = new AlarmController(context);
+        if(alarmEnable) {
+            alarmController.startAlarm(
+                    alarm.getDate().getTime(), alarm.getMedicine().getId(), alarm.getId());
+            if(!isInit) {
+                Toast.makeText(context, String.format(
+                        context.getString(R.string.start_alarm_toast),
+                        AppDateFormat.ALARM_TIME.format(alarm.getDate())),
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            alarmController.cancelAlarm(alarm.getMedicine().getId(), alarm.getId());
+            if(!isInit) {
+                Toast.makeText(context, String.format(
+                        context.getString(R.string.stop_alarm_toast),
+                        AppDateFormat.ALARM_TIME.format(
+                                AppDatabaseDAO.selectAlarm(alarm.getId()).getDate())),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
         int switchRes = alarm.isEnable() ?
                 R.drawable.ic_alarm_on_black : R.drawable.ic_alarm_off_black;
         imageAlarmSwitch.setImageResource(switchRes);

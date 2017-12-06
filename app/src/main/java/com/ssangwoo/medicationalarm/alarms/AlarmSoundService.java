@@ -37,8 +37,8 @@ public class AlarmSoundService extends Service {
         public void run() {
             mVibrator.vibrate(DURATION_OF_VIBRATION);
             // Provide loop for vibration
-            alarmThreadHandler.postDelayed(vibrationRunnable,
-                    DURATION_OF_VIBRATION + VIBRATE_DELAY_TIME);
+//            alarmThreadHandler.postDelayed(vibrationRunnable,
+//                    DURATION_OF_VIBRATION + VIBRATE_DELAY_TIME);
         }
     };
 

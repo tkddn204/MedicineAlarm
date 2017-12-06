@@ -17,6 +17,7 @@ import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -68,8 +69,7 @@ public class MedicineRecyclerViewAdapter
         holder.textTitle.setText(medicine.getTitle());
         holder.textDesc.setText(medicine.getDescription());
 
-        String dateString = AppDateFormat.DATE_FROM.format(medicine.getDateFrom())
-                + " " + AppDateFormat.DATE_TO.format(medicine.getDateTo());
+        String dateString = AppDateFormat.buildDateString(medicine, " ");
         holder.textDate.setText(dateString);
 
         int numberOfAlarm = medicine.getAlarmList().size();

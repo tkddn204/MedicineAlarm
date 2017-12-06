@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="64dp">
-
-    <TextView
-        android:text="@string/take_question"
-        android:textSize="24sp"
-        android:layout_margin="4dp"
-        android:textColor="@android:color/black"
-        android:gravity="center"
-        android:layout_weight="2"
-        android:layout_width="0dp"
-        android:layout_height="match_parent" />
+    android:layout_height="64dp"
+    android:orientation="horizontal">
 
     <Button
-        android:text="@string/take_medicine"
-        android:textSize="20sp"
-        android:layout_weight="1"
+        android:id="@+id/button_take_medicine"
         android:layout_width="0dp"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/notification_take_medicine"
+        android:textSize="20sp" />
 
     <Button
-        android:text="@string/not_take_medicine"
-        android:textSize="20sp"
-        android:layout_weight="1"
+        android:id="@+id/button_do_not_take_medicine"
         android:layout_width="0dp"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/notification_not_take_medicine"
+        android:textSize="20sp" />
 
+    <Button
+        android:id="@+id/button_re_alarm"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/notification_re_alarm"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/button_not_yet_take_medicine"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/notification_not_yet_take_medicine"
+        android:textSize="20sp" />
 </LinearLayout>

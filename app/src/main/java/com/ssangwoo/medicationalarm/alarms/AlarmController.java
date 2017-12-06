@@ -8,14 +8,13 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.models.Alarm;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,11 +31,17 @@ public class AlarmController {
         this.context = context;
     }
 
-    public void startAlarm(long nextAlarmTime, int alarm_id) {
+    public static void startAlarm(Context context, long nextAlarmTime, int medicineId, int alarmId) {
+
+        // TODO : 스태틱으로 해보기
+    }
+
+    public void startAlarm(long nextAlarmTime, int medicineId, int alarmId) {
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("alarm_id", alarm_id);
+        intent.putExtra("alarm_id", alarmId);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                context.getResources().getInteger(R.integer.request_medicine_broadcast),
+                context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
+                        * medicineId * alarmId,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager =
@@ -61,10 +66,14 @@ public class AlarmController {
         }
     }
 
-    public void cancelAlarm() {
+    public void cancelAlarm(int medicineId, int alarmId) {
+
         Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent
-                .getBroadcast(context, 0, intent, 0);
+        intent.putExtra("alarm_id", alarmId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
+                        * medicineId * alarmId,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -86,15 +95,18 @@ public class AlarmController {
         wakeLock.acquire(WAKELOCK_ACQUIRE_TIMEOUT);
     }
 
-    public void stopAlarm() {
+    public void stopAlarmSoundService() {
         context.stopService(new Intent(context, AlarmSoundService.class));
     }
 
     public void resetAlarm() {
         List<Alarm> alarmList = AppDatabaseDAO.selectAlarmList();
-        for(Alarm alarm: alarmList) {
-            AppDatabaseDAO.nextAlarmUpdate(alarm.getId());
-            startAlarm(alarm.getDate().getTime(), alarm.getId());
+        if(!alarmList.isEmpty()) {
+            for (Alarm alarm : alarmList) {
+                AppDatabaseDAO.nextAlarmDateUpdate(alarm.getId());
+                cancelAlarm(alarm.getMedicine().getId(), alarm.getId());
+                startAlarm(alarm.getDate().getTime(), alarm.getMedicine().getId(), alarm.getId());
+            }
         }
     }
 }

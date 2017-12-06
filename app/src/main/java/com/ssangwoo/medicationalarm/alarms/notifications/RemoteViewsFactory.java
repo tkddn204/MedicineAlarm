@@ -16,21 +16,28 @@ import com.ssangwoo.medicationalarm.enums.NotificationActionEnum;
 
 public class RemoteViewsFactory extends ContextWrapper {
 
-
-    public RemoteViewsFactory(Context context) {
+    private RemoteViewsFactory(Context context) {
         super(context);
     }
 
-    public RemoteViews makeRemoteViews() {
+    public static RemoteViewsFactory newInstance(Context context) {
+        return new RemoteViewsFactory(context);
+    }
+
+    public RemoteViews makeConfirmAlarmRemoteViews() {
         RemoteViews remoteViews = new RemoteViews(getPackageName(),
-                R.layout.layout_keep_alarm_remote_view);
+                R.layout.layout_confirm_alarm_remote_view);
 
         Intent onClickIntent = new Intent(this, AlarmReceiver.class);
         for(NotificationActionEnum actionEnum: NotificationActionEnum.values()) {
+            if (actionEnum.getMappingId() == 0) {
+                continue;
+            }
             onClickIntent.setAction(actionEnum.getAction());
             remoteViews.setOnClickPendingIntent(
                     actionEnum.getMappingId(),
-                    PendingIntent.getBroadcast(this, 0,
+                    PendingIntent.getBroadcast(this,
+                            getResources().getInteger(R.integer.request_medicine_alarm_broadcast),
                             onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         }
         return remoteViews;

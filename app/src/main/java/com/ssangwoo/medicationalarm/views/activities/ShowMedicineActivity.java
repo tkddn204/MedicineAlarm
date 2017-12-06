@@ -39,9 +39,14 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
         final int medicineId = getIntent().getIntExtra("medicine_id", 0);
         medicine = AppDatabaseDAO.selectMedicine(medicineId);
         textTitle.setText(medicine.getTitle());
+        if(medicine.getTitle().equals("")) {
+            textTitle.setText("약 이름 없음");
+        }
         textDesc.setText(medicine.getDescription());
-        String dateString = AppDateFormat.DATE_FROM.format(medicine.getDateFrom())
-                + " " + AppDateFormat.DATE_TO.format(medicine.getDateTo());
+        if(medicine.getDescription().equals("")) {
+            textDesc.setText("약 설명 없음");
+        }
+        String dateString = AppDateFormat.buildDateString(medicine, "\n");
         textDate.setText(dateString);
 
         showAlarmRecyclerView.setLayoutManager(new LinearLayoutManager(this));

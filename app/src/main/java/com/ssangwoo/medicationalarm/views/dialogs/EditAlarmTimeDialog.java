@@ -3,11 +3,15 @@ package com.ssangwoo.medicationalarm.views.dialogs;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.alarms.AlarmController;
 import com.ssangwoo.medicationalarm.controllers.interfaces.UpdateAlarmRecyclerInterface;
 import com.ssangwoo.medicationalarm.models.Alarm;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
+import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.Calendar;
 
@@ -45,10 +49,19 @@ public class EditAlarmTimeDialog implements TimePickerDialog.OnTimeSetListener {
 
     @Override
     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-        if(alarm != null) { // 편집
-            AppDatabaseDAO.updateAlarm(alarm, hour, minute);
+        Alarm alarm = null;
+        if(this.alarm != null) { // 편집
+            alarm = AppDatabaseDAO.updateAlarm(this.alarm, hour, minute);
+            new AlarmController(context).cancelAlarm(alarm.getMedicine().getId(), alarm.getId());
         } else { // 추가
-            AppDatabaseDAO.createAlarm(medicine, hour, minute);
+            alarm = AppDatabaseDAO.createAlarm(medicine, hour, minute);
+        }
+        if(alarm.isEnable()) {
+            new AlarmController(context).startAlarm(
+                    alarm.getDate().getTime(), medicine.getId(), alarm.getId());
+            Toast.makeText(context, String.format(
+                    context.getString(R.string.start_alarm_toast),
+                    AppDateFormat.ALARM_TIME.format(alarm.getDate())), Toast.LENGTH_SHORT).show();
         }
         updateInterface.update(medicine.getId());
     }

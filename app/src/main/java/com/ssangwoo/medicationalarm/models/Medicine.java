@@ -6,6 +6,7 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -20,16 +21,16 @@ public class Medicine extends BaseModel {
     int id;
 
     @Column
-    String title = "감기약";
+    String title = "";
 
     @Column
-    String description = "빨리 먹고 낫자";
+    String description = "";
 
     @Column(name = "date_from")
     Date dateFrom = new Date();
 
     @Column(name = "date_to")
-    Date dateTo = new Date();
+    Date dateTo = new Date(AppDateFormat.DATE_AFTER_SEVEN_DAYS);
 
     List<Alarm> alarmList;
 

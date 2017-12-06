@@ -2,13 +2,11 @@ package com.ssangwoo.medicationalarm.models;
 
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
-import com.raizlabs.android.dbflow.sql.language.property.PropertyFactory;
 import com.ssangwoo.medicationalarm.alarms.AlarmController;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
-import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,10 +42,10 @@ public class AppDatabaseDAO {
     public static List<Alarm> selectAlarmList(int medicineId) {
         return new Select().from(Alarm.class)
                 .where(Alarm_Table.medicine_id.eq(medicineId))
-                .orderBy(Alarm_Table.date, truea).queryList();
+                .orderBy(Alarm_Table.date, true).queryList();
     }
 
-    public static void nextAlarmUpdate(Alarm alarm) {
+    public static void nextAlarmDateUpdate(Alarm alarm) {
         Calendar changeCalendar = Calendar.getInstance();
         long nowTime = changeCalendar.getTimeInMillis();
 
@@ -59,12 +57,12 @@ public class AppDatabaseDAO {
         }
 
         alarm.setDate(changeCalendar.getTime());
-        alarm.update();
     }
 
-    public static void nextAlarmUpdate(int alarmId) {
+    public static void nextAlarmDateUpdate(int alarmId) {
         Alarm alarm = selectAlarm(alarmId);
-        nextAlarmUpdate(alarm);
+        nextAlarmDateUpdate(alarm);
+        alarm.update();
     }
 
     public static void deleteAlarm(int alarmId) {
@@ -80,26 +78,31 @@ public class AppDatabaseDAO {
                 .querySingle();
     }
 
-    public static void createAlarm(Medicine medicine, int hour, int minutes) {
+    public static Alarm createAlarm(Medicine medicine, int hour, int minutes) {
         Alarm alarm = new Alarm(medicine, hour, minutes);
-        nextAlarmUpdate(alarm);
+        nextAlarmDateUpdate(alarm);
         alarm.save();
 
         AlarmInfo alarmInfo = new AlarmInfo(alarm);
         alarmInfo.save();
+
+        return alarm;
     }
 
-    public static void updateAlarm(Alarm alarm, int hour, int minute) {
-        // TODO : 이전 알람 취소
+    public static Alarm updateAlarm(Alarm alarm, int hour, int minute) {
         alarm.setHour(hour);
         alarm.setMinutes(minute);
-        nextAlarmUpdate(alarm);
+        nextAlarmDateUpdate(alarm);
         alarm.update();
+        return alarm;
     }
 
     public static void updateTakeMedicine(AlarmInfo alarmInfo,
                                           TakeMedicineEnum takeMedicineEnum) {
         alarmInfo.setTakeMedicine(takeMedicineEnum);
+        if(alarmInfo.getTakeMedicine().equals(TakeMedicineEnum.TAKE)) {
+            alarmInfo.setTakeDate(new Date());
+        }
         alarmInfo.update();
     }
 }

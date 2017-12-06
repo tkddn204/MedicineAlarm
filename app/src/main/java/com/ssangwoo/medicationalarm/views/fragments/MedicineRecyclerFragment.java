@@ -11,11 +11,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.controllers.MedicineRecyclerViewAdapter;
+import com.ssangwoo.medicationalarm.lib.RecyclerViewEmptySupport;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.models.Medicine_Table;
@@ -25,8 +27,9 @@ import java.util.List;
 
 public class MedicineRecyclerFragment extends Fragment {
 
-    RecyclerView medicineRecyclerView;
+    RecyclerViewEmptySupport medicineRecyclerView;
     MedicineRecyclerViewAdapter adapter;
+    RelativeLayout medicineEmptyContainer;
 
     public MedicineRecyclerFragment() {
         // Required empty public constructor
@@ -42,21 +45,29 @@ public class MedicineRecyclerFragment extends Fragment {
         View view = getLayoutInflater().inflate(
                 R.layout.fragment_main_medicine_recycler, container, false);
 
-//        TODO: 처음에 디비 감기약 들어가게 하기(디비 비었으면)
-//        ArrayList<MedicineModel> medicineModels = new ArrayList<>();
-//        MedicineModel medicineModel =
-//                new MedicineModel(
-//                        "감기약" + Integer.toString(i),
-//                        "빨리 낫자" + Integer.toString(i),
-//                        new WhenModel(true, false, true)
-//                );
-//        medicineModel.save();
-//        medicineModels.add(medicineModel);
         medicineRecyclerView = view.findViewById(R.id.medicine_recycler_view);
-        List<Medicine> medicineList = AppDatabaseDAO.selectMedicineList();
+        medicineEmptyContainer = view.findViewById(R.id.medicine_recycler_empty_container);
+
         medicineRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        medicineRecyclerView.setEmptyView(medicineEmptyContainer);
+        medicineEmptyContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int requestCode = getResources().getInteger(R.integer.request_edit_medicine);
+                Intent intent = new Intent(getContext(),
+                        EditMedicineActivity.class);
+                Medicine medicine = new Medicine();
+                medicine.insert();
+                intent.putExtra("medicine_id", medicine.getId());
+                startActivityForResult(intent, requestCode);
+            }
+        });
+
+        List<Medicine> medicineList = AppDatabaseDAO.selectMedicineList();
         adapter = new MedicineRecyclerViewAdapter(this, medicineList);
         medicineRecyclerView.setAdapter(adapter);
+
         return view;
     }
 
