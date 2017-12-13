@@ -1,15 +1,14 @@
 package com.ssangwoo.medicationalarm.controllers;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import com.ssangwoo.medicationalarm.controllers.interfaces.UpdateAlarmRecyclerInterface;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.AlarmAddItemViewHolder;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.AlarmItemViewHolder;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.BindingViewHolder;
+import com.ssangwoo.medicationalarm.lib.ObserverableAdapter;
 import com.ssangwoo.medicationalarm.models.Alarm;
-import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 
 import java.util.List;
 
@@ -17,15 +16,13 @@ import java.util.List;
  * Created by ssangwoo on 2017-10-29.
  */
 
-public class AlarmRecyclerViewAdapter
-        extends RecyclerView.Adapter<BindingViewHolder>
+public class AlarmRecyclerViewAdapter extends ObserverableAdapter<BindingViewHolder>
         implements UpdateAlarmRecyclerInterface {
     private static final int LIST_ADD_ITEM = 10;
 
-    private List<Alarm> alarmList;
-
     public AlarmRecyclerViewAdapter(List<Alarm> alarmList) {
-        this.alarmList = alarmList;
+        super(Alarm.class);
+        this.dataList = alarmList;
     }
 
     @Override
@@ -42,7 +39,7 @@ public class AlarmRecyclerViewAdapter
 
     @Override
     public int getItemViewType(int position) {
-        if(!alarmList.isEmpty() && position == getItemCount() - 1) {
+        if(!dataList.isEmpty() && position == getItemCount() - 1) {
             return LIST_ADD_ITEM;
         } else {
             return super.getItemViewType(position);
@@ -52,20 +49,21 @@ public class AlarmRecyclerViewAdapter
     @Override
     public void onBindViewHolder(BindingViewHolder holder, int position) {
         if(getItemViewType(position) == LIST_ADD_ITEM) {
-            ((AlarmAddItemViewHolder) holder).bindViewHolder(alarmList.get(0).getMedicine());
+            ((AlarmAddItemViewHolder) holder).bindViewHolder(
+                    ((Alarm)dataList.get(0)).getMedicine());
         } else {
-            ((AlarmItemViewHolder) holder).bindViewHolder(alarmList.get(position));
+            ((AlarmItemViewHolder) holder).bindViewHolder(
+                    (Alarm)dataList.get(position));
         }
     }
 
     @Override
     public int getItemCount() {
-        return alarmList.isEmpty() ? 0 : alarmList.size() + 1;
+        return dataList.isEmpty() ? 0 : dataList.size() + 1;
     }
 
     @Override
     public void update(int medicineId) {
-        this.alarmList = AppDatabaseDAO.selectAlarmList(medicineId);
         notifyDataSetChanged();
     }
 }

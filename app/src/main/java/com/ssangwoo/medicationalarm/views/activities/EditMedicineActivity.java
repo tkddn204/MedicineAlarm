@@ -1,7 +1,6 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -14,11 +13,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
-import com.ssangwoo.medicationalarm.models.Medicine_Table;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.Calendar;
@@ -152,10 +149,9 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
                 editDesc.getText().toString().isEmpty()) {
             AppDatabaseDAO.deleteMedicine(medicineId);
         }
-        medicine.setTitle(editTitle.getText().toString());
-        medicine.setDescription(editDesc.getText().toString());
-        medicine.setModifiedDate(new Date());
-        medicine.update();
+        AppDatabaseDAO.updateMedicine(medicine,
+                editTitle.getText().toString(),
+                editDesc.getText().toString());
     }
 
     @Override

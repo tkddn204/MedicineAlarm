@@ -138,8 +138,9 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
 
     @Override
     public void update(int medicineId) {
-        List<Alarm> alarmList = AppDatabaseDAO.selectAlarmList(medicineId);
-        alarmAdapter = new AlarmRecyclerViewAdapter(alarmList);
-        showAlarmRecyclerView.setAdapter(alarmAdapter);
+        alarmAdapter.notifyDataSetChanged();
+//        List<Alarm> alarmList = AppDatabaseDAO.selectAllAlarmList(medicineId);
+//        alarmAdapter = new AlarmRecyclerViewAdapter(alarmList);
+//        showAlarmRecyclerView.setAdapter(alarmAdapter);
     }
 }

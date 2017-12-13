@@ -4,11 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.ssangwoo.medicationalarm.models.Alarm;
-import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
-
-import java.util.List;
-
 /**
  * Created by ssangwoo on 2017-11-20.
  */

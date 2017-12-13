@@ -1,8 +1,11 @@
 package com.ssangwoo.medicationalarm.models;
 
+import android.os.Handler;
+import android.os.Looper;
+
+import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
-import com.ssangwoo.medicationalarm.alarms.AlarmController;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 
 import java.util.Calendar;
@@ -23,18 +26,12 @@ public class AppDatabaseDAO {
                 .where(Medicine_Table.id.eq(medicineId)).querySingle();
     }
 
-    public static void deleteMedicine(int medicineId){
-        new Delete().from(Medicine.class)
-                .where(Medicine_Table.id.eq(medicineId))
-                .execute();
-    }
-
     public static Alarm selectAlarm(int alarmId) {
         return new Select().from(Alarm.class)
                 .where(Alarm_Table.id.eq(alarmId)).querySingle();
     }
 
-    public static List<Alarm> selectAlarmList() {
+    public static List<Alarm> selectAllAlarmList() {
         return new Select().from(Alarm.class)
                 .orderBy(Alarm_Table.date, true).queryList();
     }
@@ -43,6 +40,26 @@ public class AppDatabaseDAO {
         return new Select().from(Alarm.class)
                 .where(Alarm_Table.medicine_id.eq(medicineId))
                 .orderBy(Alarm_Table.date, true).queryList();
+    }
+
+    public static AlarmInfo selectTodayAlarmInfo(int alarmId) {
+        return new Select().from(AlarmInfo.class)
+                .where(AlarmInfo_Table.alarm_id.eq(alarmId))
+                .orderBy(AlarmInfo_Table.takeDate, false)
+                .querySingle();
+    }
+
+    // 위까지가 셀렉트
+
+    public static void nextAlarmDateUpdate(int alarmId) {
+        FlowContentObserver observer = new FlowContentObserver();
+        observer.beginTransaction();
+
+        Alarm alarm = selectAlarm(alarmId);
+        nextAlarmDateUpdate(alarm);
+        alarm.update();
+
+        observer.endTransactionAndNotify();
     }
 
     public static void nextAlarmDateUpdate(Alarm alarm) {
@@ -57,43 +74,55 @@ public class AppDatabaseDAO {
         }
 
         alarm.setDate(changeCalendar.getTime());
-    }
-
-    public static void nextAlarmDateUpdate(int alarmId) {
-        Alarm alarm = selectAlarm(alarmId);
-        nextAlarmDateUpdate(alarm);
         alarm.update();
-    }
-
-    public static void deleteAlarm(int alarmId) {
-        new Delete().from(Alarm.class)
-                .where(Alarm_Table.id.eq(alarmId))
-                .execute();
-    }
-
-    public static AlarmInfo selectTodayAlarmInfo(int alarmId) {
-        return new Select().from(AlarmInfo.class)
-                .where(AlarmInfo_Table.alarm_id.eq(alarmId))
-                .orderBy(AlarmInfo_Table.takeDate, false)
-                .querySingle();
     }
 
     public static Alarm createAlarm(Medicine medicine, int hour, int minutes) {
+        FlowContentObserver observer = new FlowContentObserver();
+        observer.beginTransaction();
+
         Alarm alarm = new Alarm(medicine, hour, minutes);
-        nextAlarmDateUpdate(alarm);
         alarm.save();
+        nextAlarmDateUpdate(alarm);
 
         AlarmInfo alarmInfo = new AlarmInfo(alarm);
+        alarm.getAlarmInfoList().add(alarmInfo);
+
         alarmInfo.save();
 
+        observer.endTransactionAndNotify();
         return alarm;
     }
 
+    public static void deleteMedicine(int medicineId){
+        FlowContentObserver observer = new FlowContentObserver();
+        observer.beginTransaction();
+        new Delete().from(Medicine.class)
+                .where(Medicine_Table.id.eq(medicineId))
+                .execute();
+        observer.endTransactionAndNotify();
+    }
+
+    public static void deleteAlarm(int alarmId) {
+        FlowContentObserver observer = new FlowContentObserver();
+        observer.beginTransaction();
+
+        new Delete().from(Alarm.class)
+                .where(Alarm_Table.id.eq(alarmId))
+                .execute();
+
+        observer.endTransactionAndNotify();
+    }
+
     public static Alarm updateAlarm(Alarm alarm, int hour, int minute) {
+        FlowContentObserver observer = new FlowContentObserver();
+        observer.beginTransaction();
+
         alarm.setHour(hour);
         alarm.setMinutes(minute);
         nextAlarmDateUpdate(alarm);
-        alarm.update();
+
+        observer.endTransactionAndNotify();
         return alarm;
     }
 
@@ -104,5 +133,18 @@ public class AppDatabaseDAO {
             alarmInfo.setTakeDate(new Date());
         }
         alarmInfo.update();
+
+    }
+
+    public static void updateMedicine(Medicine medicine, String title, String desc) {
+        FlowContentObserver observer = new FlowContentObserver();
+        observer.beginTransaction();
+
+        medicine.setTitle(title);
+        medicine.setDescription(desc);
+        medicine.setModifiedDate(new Date());
+        medicine.update();
+
+        observer.endTransactionAndNotify();
     }
 }

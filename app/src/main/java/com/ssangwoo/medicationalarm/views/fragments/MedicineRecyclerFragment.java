@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,17 +76,18 @@ public class MedicineRecyclerFragment extends Fragment {
                 requestCode == getResources().getInteger(R.integer.request_show_medicine)) {
 //            if (resultCode == RESULT_OK) {
 //            }
-            remakeMedicineList();
+            adapter.notifyDataSetChanged();
+            //remakeMedicineList();
         }
     }
 
-    private void remakeMedicineList() {
-        List<Medicine> medicineList =
-                new Select().from(Medicine.class).queryList();
-        adapter = new MedicineRecyclerViewAdapter(this, medicineList);
-        medicineRecyclerView.setAdapter(adapter);
-//                adapter.notifyDataSetChanged();
-    }
+//    private void remakeMedicineList() {
+//        List<Medicine> medicineList =
+//                new Select().from(Medicine.class).queryList();
+//        adapter = new MedicineRecyclerViewAdapter(this, medicineList);
+//        medicineRecyclerView.setAdapter(adapter);
+////                adapter.notifyDataSetChanged();
+//    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -106,6 +106,7 @@ public class MedicineRecyclerFragment extends Fragment {
                 startActivityForResult(intent, getResources().getInteger(R.integer.request_edit_medicine));
                 break;
             case R.id.action_show_delete:
+                assert medicine != null;
                 new AlertDialog.Builder(getContext())
                         .setTitle(medicine.getTitle() + " 삭제")
                         .setMessage(getString(R.string.show_delete_message))
@@ -113,7 +114,8 @@ public class MedicineRecyclerFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 AppDatabaseDAO.deleteMedicine(medicineId);
-                                remakeMedicineList();
+                                //remakeMedicineList();
+                                adapter.notifyDataSetChanged();
                             }
                         }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override

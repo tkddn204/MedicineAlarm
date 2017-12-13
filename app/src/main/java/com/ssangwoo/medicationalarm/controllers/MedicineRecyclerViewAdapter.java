@@ -13,11 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.lib.ObserverableAdapter;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,17 +26,17 @@ import java.util.Locale;
  */
 
 public class MedicineRecyclerViewAdapter
-        extends RecyclerView.Adapter<MedicineRecyclerViewAdapter.ViewHolder>
+        extends ObserverableAdapter<MedicineRecyclerViewAdapter.ViewHolder>
         implements View.OnCreateContextMenuListener {
 
-    List<Medicine> medicineList;
     Fragment fragment;
     Context context;
 
     public MedicineRecyclerViewAdapter(Fragment fragment, List<Medicine> medicineList) {
+        super(Medicine.class);
         this.fragment = fragment;
         this.context = fragment.getContext();
-        this.medicineList = medicineList;
+        this.dataList = medicineList;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MedicineRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Medicine medicine = medicineList.get(position);
+        Medicine medicine = (Medicine)dataList.get(position);
         final int medicineId = medicine.getId();
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,11 +78,6 @@ public class MedicineRecyclerViewAdapter
             holder.textAlarm.setText(String.format(Locale.KOREA,
                     "알람 %d개", numberOfAlarm));
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return medicineList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

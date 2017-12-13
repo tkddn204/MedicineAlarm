@@ -1,7 +1,5 @@
 package com.ssangwoo.medicationalarm.views.fragments;
 
-import android.content.Context;
-import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -16,7 +14,6 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.views.activities.SettingActivity;
 
 /**
  * Created by ssangwoo on 2017-12-06.
@@ -37,15 +34,24 @@ public class SettingFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.preferences);
         setHasOptionsMenu(true);
 
-        //bindPreferenceSummaryToValue(findPreference("alarm_switch"));
+        bindBooleanPreferenceSummaryToValue(findPreference("alarm_switch"));
+        bindPreferenceSummaryToValue(findPreference("re_alarm_list"));
+    }
+
+    private void bindBooleanPreferenceSummaryToValue(Preference preference) {
+        // Set the listener to watch for value changes.
+        preference.setOnPreferenceChangeListener(this);
+
+        onPreferenceChange(preference,
+                PreferenceManager
+                        .getDefaultSharedPreferences(preference.getContext())
+                        .getBoolean(preference.getKey(), true));
     }
 
     private void bindPreferenceSummaryToValue(Preference preference) {
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(this);
 
-        // Trigger the listener immediately with the preference's
-        // current value.
         onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
@@ -91,9 +97,9 @@ public class SettingFragment extends PreferenceFragment
                 }
             }
 
+        } else if(value instanceof Boolean) {
+            // sdaf
         } else {
-            // For all other preferences, set the summary to the value's
-            // simple string representation.
             preference.setSummary(stringValue);
         }
         return true;

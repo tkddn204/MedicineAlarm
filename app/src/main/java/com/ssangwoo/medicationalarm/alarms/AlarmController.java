@@ -7,13 +7,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.models.Alarm;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
-import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.List;
 
@@ -49,11 +46,14 @@ public class AlarmController {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                assert alarmManager != null;
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                         nextAlarmTime, pendingIntent);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                assert alarmManager != null;
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
             } else {
+                assert alarmManager != null;
                 alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
             }
             intent = new Intent("android.intent.action.ALARM_CHANGED");
@@ -62,6 +62,7 @@ public class AlarmController {
         } else {
             AlarmManager.AlarmClockInfo alarmClockInfo
                     = new AlarmManager.AlarmClockInfo(nextAlarmTime, pendingIntent);
+            assert alarmManager != null;
             alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
         }
     }
@@ -75,6 +76,7 @@ public class AlarmController {
                         * medicineId * alarmId,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        assert alarmManager != null;
         alarmManager.cancel(pendingIntent);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             intent = new Intent("android.intent.action.ALARM_CHANGED");
@@ -88,6 +90,7 @@ public class AlarmController {
     public void wakeupAlarm() {
         PowerManager powerManager =
                 (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        assert powerManager != null;
         PowerManager.WakeLock wakeLock =
                 powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK |
                         PowerManager.ACQUIRE_CAUSES_WAKEUP |
@@ -100,7 +103,7 @@ public class AlarmController {
     }
 
     public void resetAlarm() {
-        List<Alarm> alarmList = AppDatabaseDAO.selectAlarmList();
+        List<Alarm> alarmList = AppDatabaseDAO.selectAllAlarmList();
         if(!alarmList.isEmpty()) {
             for (Alarm alarm : alarmList) {
                 AppDatabaseDAO.nextAlarmDateUpdate(alarm.getId());

@@ -14,7 +14,6 @@ import android.view.View;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.alarms.AlarmController;
-import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.views.fragments.MedicineRecyclerFragment;
 

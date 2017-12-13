@@ -3,8 +3,6 @@ package com.ssangwoo.medicationalarm.alarms;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.ssangwoo.medicationalarm.R;
@@ -14,8 +12,6 @@ import com.ssangwoo.medicationalarm.models.Alarm;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.alarms.notifications.AlarmNotification;
-import com.ssangwoo.medicationalarm.alarms.notifications.RemoteViewsFactory;
-import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.Calendar;
 
@@ -42,6 +38,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmController.wakeupAlarm();
 
         alarmId = intent.getIntExtra("alarm_id", -1);
+        assert alarmId != -1;
         Alarm alarm = AppDatabaseDAO.selectAlarm(alarmId);
         medicine = alarm.getMedicine();
         alarmNotification = new AlarmNotification(context);
@@ -88,6 +85,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmNotification.notify(
                 context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
                         * (medicine.getId()+1) * (alarmId+1),
-                alarmNotification.makeNotification(medicine.getTitle(), medicine.getId(), alarmId));
+                alarmNotification.makeNotification(medicine, alarmId));
     }
 }

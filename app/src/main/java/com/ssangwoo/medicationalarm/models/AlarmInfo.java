@@ -23,6 +23,9 @@ public class AlarmInfo extends BaseModel {
     Alarm alarm;
 
     @Column
+    int pendingRequestNumber;
+
+    @Column
     Date takeDate = new Date();
 
     @Column(typeConverter = TakeMedicineConverter.class)
@@ -32,6 +35,9 @@ public class AlarmInfo extends BaseModel {
 
     public AlarmInfo(Alarm alarm) {
         this.alarm = alarm;
+        pendingRequestNumber = 5378 *
+                (alarm.getMedicine().getId()+1) *
+                (alarm.getId()+1) + id;
     }
 
     public AlarmInfo(Alarm alarm, Date takeDate) {
@@ -53,6 +59,14 @@ public class AlarmInfo extends BaseModel {
 
     public void setAlarm(Alarm alarm) {
         this.alarm = alarm;
+    }
+
+    public int getPendingRequestNumber() {
+        return pendingRequestNumber;
+    }
+
+    public void setPendingRequestNumber(int pendingRequestNumber) {
+        this.pendingRequestNumber = pendingRequestNumber;
     }
 
     public Date getTakeDate() {
