@@ -1,108 +1,82 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
+import android.Manifest;
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.controllers.MainFragmentAdapter;
+import com.ssangwoo.medicationalarm.alarms.AlarmController;
+import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
+import com.ssangwoo.medicationalarm.views.fragments.MedicineRecyclerFragment;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseToolbarActivity {
 
-    AppBarLayout appBarLayout;
-    CollapsingToolbarLayout collapsingToolbarLayout;
-    Toolbar toolbar;
-    ViewPager viewPager;
-    TabLayout tabLayout;
-    FloatingActionButton floatingActionButton;
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 1010;
+
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void setView() {
-        collapsingToolbarLayout.setTitleEnabled(false);
-        toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
+        super.setView();
 
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if(verticalOffset == 0 && tabLayout.getSelectedTabPosition() == 0) {
-                    floatingActionButton.show();
-                } else {
-                    floatingActionButton.hide();
-                }
-            }
-        });
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.main_fragment_container,
+                        MedicineRecyclerFragment.newInstance())
+                .commit();
+
+        setFloatingActionButtonVisible();
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int requestCode = getResources().getInteger(R.integer.request_edit_medicine);
-                startActivityForResult(
-                        new Intent(getApplicationContext(), EditMedicineActivity.class),
-                        requestCode);
+                Intent intent = new Intent(getApplicationContext(),
+                        EditMedicineActivity.class);
+                startActivityForResult(intent, requestCode);
             }
         });
 
-        viewPager.setAdapter(
-                MainFragmentAdapter.newInstance(
-                        this, getSupportFragmentManager()));
-        tabLayout.setupWithViewPager(viewPager);
-        setUpTabIcons();
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if(tab.getPosition() == 0) {
-                    floatingActionButton.show();
-                } else {
-                    floatingActionButton.hide();
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+        requestPermission();
+        new AlarmController(getApplicationContext()).resetAlarm();
     }
 
-    private void setUpTabIcons() {
-        if(tabLayout.getTabCount() > 0) {
-            tabLayout.getTabAt(0).setIcon(R.drawable.ic_list);
-            tabLayout.getTabAt(1).setIcon(R.drawable.ic_calendar);
-            tabLayout.getTabAt(2).setIcon(R.drawable.ic_analysis);
+    public void setFloatingActionButtonVisible() {
+        if(AppDatabaseDAO.selectMedicineList().isEmpty()) {
+            floatingActionButton.hide();
+        } else {
+            floatingActionButton.show();
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == getResources().getInteger(R.integer.request_edit_medicine)) {
-            if (resultCode == RESULT_OK) {
-                viewPager.getAdapter().notifyDataSetChanged();
-                setUpTabIcons();
-            }
-        }
+        setFloatingActionButtonVisible();
+    }
+
+    @Override
+    protected String setToolbarTitle() {
+        return getString(R.string.app_name);
+    }
+
+    @Override
+    protected int setToolbarViewId() {
+        return R.id.main_toolbar;
+    }
+
+    @Override
+    protected int setContentViewRes() {
+        return R.layout.activity_main;
     }
 
     @Override
     protected void initView() {
-        setContentView(R.layout.activity_main);
-        appBarLayout = findViewById(R.id.main_app_bar_layout);
-        collapsingToolbarLayout = findViewById(R.id.main_collapsing_toolbar_layout);
-        toolbar = findViewById(R.id.main_toolbar);
-        viewPager = findViewById(R.id.main_view_pager);
-        tabLayout = findViewById(R.id.main_tab_layout);
+        super.initView();
         floatingActionButton = findViewById(R.id.medicine_floating_action_button);
     }
 
@@ -110,8 +84,9 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_setting) {
             startActivity(new Intent(getApplicationContext(), SettingActivity.class));
+            return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override
@@ -119,5 +94,41 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.menu_main_toolbar_action, menu);
         // MenuItem item = menu.findItem(R.id.action_setting);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void requestPermission() {
+        // Activity에서 실행하는경우
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL);
+//
+//            // 이 권한을 필요한 이유를 설명해야하는가?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//
+//            } else {
+//
+//
+//            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // 권한 허가
+                    // 해당 권한을 사용해서 작업을 진행할 수 있습니다
+                } else {
+                    // 권한 거부
+                    // 사용자가 해당권한을 거부했을때 해주어야 할 동작을 수행합니다
+                }
+        }
     }
 }

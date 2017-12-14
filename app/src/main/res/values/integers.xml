@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="request_edit_medicine">8</integer>
-    <integer name="max_count_edit_title">20</integer>
-    <integer name="max_count_edit_desc">30</integer>
+    <integer name="request_edit_medicine">10</integer>
+    <integer name="request_show_medicine">11</integer>
+
 </resources>

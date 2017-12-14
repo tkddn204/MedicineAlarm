@@ -1,37 +1,62 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.views.fragments.SettingFragment;
 
-public class SettingActivity extends BaseToolbarWithBackButtonActivity {
+public class SettingActivity extends AppCompatPreferenceActivity {
 
     @Override
-    protected void setView() {
-        super.setView();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_setting);
+        setupActionBar();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.setting_fragment_container,
+                        SettingFragment.newInstance())
+                .commit();
+    }
+
+    private void setupActionBar() {
+        Toolbar toolbar = findViewById(R.id.settings_toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
-    protected String setToolbarTitle() {
-        return getString(R.string.main_setting);
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            if (!super.onMenuItemSelected(featureId, item)) {
+                NavUtils.navigateUpFromSameTask(this);
+            }
+            return true;
+        }
+        return super.onMenuItemSelected(featureId, item);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected int setToolbarViewId() {
-        return R.id.setting_toolbar;
+    public boolean onIsMultiPane() {
+        return isXLargeTablet(this);
     }
 
-    @Override
-    protected int setContentViewRes() {
-        return R.layout.activity_setting;
-    }
-
-    @Override
-    protected void initView() {
-        super.initView();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+    private static boolean isXLargeTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 }

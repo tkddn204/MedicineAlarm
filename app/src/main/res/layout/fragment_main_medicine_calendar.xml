@@ -5,15 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ssangwoo.medicationalarm.views.fragments.MainMedicineCalendarFragment">
-    <TextView
-        android:id="@+id/text_calendar_date"
-        android:text="2017년 10월"
-        android:textColor="@android:color/black"
-        android:textSize="28sp"
-        android:layout_margin="16dp"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
+    tools:context="com.ssangwoo.medicationalarm.views.fragments.MedicineCalendarFragment">
+    <CalendarView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <View
         android:background="@color/colorPrimary"

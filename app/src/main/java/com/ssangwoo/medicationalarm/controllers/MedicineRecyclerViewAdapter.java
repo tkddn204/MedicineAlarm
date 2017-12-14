@@ -3,20 +3,21 @@ package com.ssangwoo.medicationalarm.controllers;
 import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.models.MedicineModel;
-import com.ssangwoo.medicationalarm.models.WhenModel;
+import com.ssangwoo.medicationalarm.lib.ObservableAdapter;
+import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,14 +26,17 @@ import java.util.Locale;
  */
 
 public class MedicineRecyclerViewAdapter
-        extends RecyclerView.Adapter<MedicineRecyclerViewAdapter.ViewHolder> {
+        extends ObservableAdapter<MedicineRecyclerViewAdapter.ViewHolder>
+        implements View.OnCreateContextMenuListener {
 
-    List<MedicineModel> models;
-    Context context;
+    private Fragment fragment;
+    private Context context;
 
-    public MedicineRecyclerViewAdapter(Context context, List<MedicineModel> models) {
-        this.context = context;
-        this.models = models;
+    public MedicineRecyclerViewAdapter(Fragment fragment, List<Medicine> medicineList) {
+        super(Medicine.class);
+        this.fragment = fragment;
+        this.context = fragment.getContext();
+        this.dataList = medicineList;
     }
 
     @Override
@@ -42,52 +46,47 @@ public class MedicineRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final MedicineModel medicineModel = models.get(position);
+        Medicine medicine = (Medicine)dataList.get(position);
+        final int medicineId = medicine.getId();
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ShowMedicineActivity.class);
-                intent.putExtra("medicine_id", medicineModel.getId());
-                context.startActivity(intent);
+                intent.putExtra("medicine_id", medicineId);
+                fragment.startActivityForResult(intent,
+                        context.getResources().getInteger(R.integer.request_show_medicine));
+            }
+        });
+        holder.container.setOnCreateContextMenuListener(this);
+        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                setMedicineId(medicineId);
+                return false;
             }
         });
 
-        holder.textTitle.setText(medicineModel.getTitle());
-        holder.textDesc.setText(medicineModel.getDescription());
+        holder.textTitle.setText(medicine.getTitle());
+        holder.textDesc.setText(medicine.getDescription());
 
-        holder.textDateFrom.setText(
-                AppDateFormat.DATE_FROM.format(medicineModel.getDateFrom()));
-        holder.textDateTo.setText(
-                AppDateFormat.DATE_TO.format(medicineModel.getDateTo()));
+        String dateString = AppDateFormat.buildDateString(medicine, " ");
+        holder.textDate.setText(dateString);
 
-        StringBuilder textWhenBuilder = new StringBuilder();
-        WhenModel when = medicineModel.getWhen();
-        if(when.isMorning()) {
-            textWhenBuilder.append("아침\n");
+        int numberOfAlarm = medicine.getAlarmList().size();
+        if(numberOfAlarm > 0) {
+            holder.imageAlarm.setImageResource(R.drawable.ic_alarm_black);
+            holder.textAlarm.setText(String.format(Locale.KOREA,
+                    context.getString(R.string.medicine_item_alarm_number_format),
+                    numberOfAlarm));
         }
-        if(when.isAfternoon()) {
-            textWhenBuilder.append("점심\n");
-        }
-        if(when.isDinner()) {
-            textWhenBuilder.append("저녁\n");
-        }
-        if(textWhenBuilder.length() != 0) {
-            textWhenBuilder.deleteCharAt(textWhenBuilder.length() - 1);
-        }
-        holder.textWhen.setText(textWhenBuilder.toString());
     }
 
-    @Override
-    public int getItemCount() {
-        return models.size();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private ConstraintLayout container;
-        private TextView textTitle, textDesc;
-        private TextView textDateFrom, textDateTo;
-        private TextView textWhen;
+        private TextView textTitle, textDesc, textDate;
+        private TextView textAlarm;
+        private ImageView imageAlarm;
 
         public ViewHolder(Context context, ViewGroup parent) {
             super(LayoutInflater.from(context)
@@ -96,11 +95,25 @@ public class MedicineRecyclerViewAdapter
             container = itemView.findViewById(R.id.medicine_recycler_view_item_container);
             textTitle = itemView.findViewById(R.id.medicine_recycler_view_item_title);
             textDesc = itemView.findViewById(R.id.medicine_recycler_view_item_desc);
-            textDateFrom = itemView.findViewById(R.id.medicine_recycler_view_item_date_from);
-            textDateTo = itemView.findViewById(R.id.medicine_recycler_view_item_date_to);
-            textWhen = itemView.findViewById(R.id.medicine_recycler_view_item_when);
+            textDate = itemView.findViewById(R.id.medicine_recycler_view_item_date);
+            imageAlarm = itemView.findViewById(R.id.image_medicine_recycler_view_item_alarm);
+            textAlarm = itemView.findViewById(R.id.text_medicine_recycler_view_item_alarm);
         }
+    }
 
+    private int medicineId;
 
+    public int getMedicineId() {
+        return medicineId;
+    }
+
+    private void setMedicineId(int medicineId) {
+        this.medicineId = medicineId;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu contextMenu, View view,
+                                    ContextMenu.ContextMenuInfo contextMenuInfo) {
+        fragment.getActivity().getMenuInflater().inflate(R.menu.menu_show_toolbar_action, contextMenu);
     }
 }

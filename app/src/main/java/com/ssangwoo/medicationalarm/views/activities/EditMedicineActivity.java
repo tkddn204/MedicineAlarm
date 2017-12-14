@@ -1,124 +1,208 @@
 package com.ssangwoo.medicationalarm.views.activities;
 
-import android.support.design.widget.TextInputEditText;
+import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
+import android.view.ContextThemeWrapper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.models.MedicineModel;
-import com.ssangwoo.medicationalarm.models.WhenModel;
+import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
+import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
-            implements CompoundButton.OnCheckedChangeListener {
+        implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
-    TextInputEditText editTitle, editDesc;
-    TextInputEditText editDateFrom, editDateTo;
+    private EditText editTitle, editDesc;
+    private TextView textEditDateFrom, textEditDateTo;
 
-    CheckBox checkBoxMorning, checkBoxAfternoon, checkBoxDinner;
-
-    LinearLayout morningAlarmContainer, afternoonAlarmContainer, dinnerAlarmContainer;
-    CheckBox checkBoxMorningAlarm, checkBoxAfternoonAlarm, checkBoxDinnerAlarm;
-    EditText editMorningAlarm, editAfternoonAlarm, editDinnerAlarm;
-
-    Button buttonSubmit;
+    private Medicine medicine;
 
     @Override
     protected void setView() {
         super.setView();
-        editDateFrom.setText(AppDateFormat.DATE_FROM.format(new Date()));
-        editDateTo.setText(AppDateFormat.DATE_TO.format(new Date()));
 
-        checkBoxMorning.setOnCheckedChangeListener(this);
-        checkBoxAfternoon.setOnCheckedChangeListener(this);
-        checkBoxDinner.setOnCheckedChangeListener(this);
+        if (getIntent().hasExtra("edit_medicine_id")) {
+            int medicineId = getIntent().getIntExtra("edit_medicine_id", -1);
+            medicine = AppDatabaseDAO.selectMedicine(medicineId);
+            if (medicine != null) {
+                editTitle.setText(medicine.getTitle());
+                editDesc.setText(medicine.getDescription());
 
-        buttonSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                WhenModel whenModel = new WhenModel(
-                        checkBoxMorning.isChecked(),
-                        checkBoxAfternoon.isChecked(),
-                        checkBoxDinner.isChecked());
-                MedicineModel medicineModel = new MedicineModel(
-                        editTitle.getText().toString(),
-                        editDesc.getText().toString(),
-                        whenModel);
-                whenModel.save();
-                medicineModel.save();
-                setResult(RESULT_OK);
-                finish();
+                textEditDateFrom.setText(
+                        AppDateFormat.DATE_YEAR_FROM.format(medicine.getDateFrom()));
+                textEditDateTo.setText(
+                        AppDateFormat.DATE_YEAR_TO.format(medicine.getDateTo()));
             }
-        });
+        } else {
+            medicine = AppDatabaseDAO.createMedicine();
+            if (medicine != null) {
+                textEditDateFrom.setText(AppDateFormat.DATE_YEAR_FROM.format(medicine.getDateFrom()));
+                textEditDateTo.setText(AppDateFormat.DATE_YEAR_TO.format(medicine.getDateTo()));
+            }
+        }
+
+        textEditDateFrom.setOnClickListener(this);
+        textEditDateTo.setOnClickListener(this);
     }
 
+    private Date editWhenDate(int year, int month, int day, boolean isFrom) {
+        Calendar calendar = Calendar.getInstance();
+        if (isFrom) {
+            calendar.set(year, month, day, 0, 0, 0);
+        } else {
+            calendar.set(year, month, day, 23, 59, 59);
+        }
+        return calendar.getTime();
+    }
+
+
+    private boolean isFrom;
     @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        int visibleFlag = b ? View.VISIBLE : View.GONE;
-        switch (compoundButton.getId()) {
-            case R.id.checkbox_edit_morning:
-                morningAlarmContainer.setVisibility(visibleFlag);
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.edit_text_date_from:
+                isFrom = true;
+                onClickEditDate(medicine.getDateFrom());
                 break;
-            case R.id.checkbox_edit_afternoon:
-                afternoonAlarmContainer.setVisibility(visibleFlag);
-                break;
-            case R.id.checkbox_edit_dinner:
-                dinnerAlarmContainer.setVisibility(visibleFlag);
-                break;
-//            case R.id.checkbox_edit_morning_alarm:
-//                break;
-//            case R.id.checkbox_edit_afternoon_alarm:
-//                break;
-//            case R.id.checkbox_edit_dinner_alarm:
-//                break;
-            default:
+            case R.id.edit_text_date_to:
+                isFrom = false;
+                onClickEditDate(medicine.getDateTo());
                 break;
         }
     }
 
-    @Override
-    protected String setToolbarTitle() {
-        return getString(R.string.main_add);
+    private void onClickEditDate(Date editDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(editDate);
+        Context context;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            context = new ContextThemeWrapper(
+                    this, android.R.style.Theme_Holo_Light_Dialog);
+        } else {
+            context = this;
+        }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                context, this,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
     }
 
     @Override
-    protected int setToolbarViewId() {
-        return R.id.edit_toolbar;
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        Date pickDate = editWhenDate(year, month, day, isFrom);
+        if(isFrom) {
+            if (medicine.getDateTo().before(pickDate)) {
+                makeAlertDialog(getString(R.string.error_date_from));
+                return;
+            }
+            medicine.setDateFrom(pickDate);
+            textEditDateFrom.setText(
+                    AppDateFormat.DATE_YEAR_FROM.format(pickDate));
+        } else {
+            if (medicine.getDateFrom().after(pickDate)) {
+                makeAlertDialog(getString(R.string.error_date_to));
+                return;
+            }
+            medicine.setDateTo(pickDate);
+            textEditDateTo.setText(
+                    AppDateFormat.DATE_YEAR_TO.format(pickDate));
+        }
+
     }
 
-    @Override
-    protected int setContentViewRes() {
-        return R.layout.activity_edit_medicine;
+    private void makeAlertDialog(String message) {
+        new AlertDialog.Builder(EditMedicineActivity.this)
+                .setMessage(message)
+                .setPositiveButton(getText(R.string.close_dialog),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if(isFrom) {
+                                    onClickEditDate(medicine.getDateFrom());
+                                } else {
+                                    onClickEditDate(medicine.getDateTo());
+                                }
+                                dialogInterface.cancel();
+                            }
+                        })
+                .create().show();
+    }
+
+    private void medicineUpdate() {
+        if (editTitle.getText().toString().isEmpty() &&
+                editDesc.getText().toString().isEmpty()) {
+            AppDatabaseDAO.deleteMedicine(medicine.getId());
+        } else {
+            AppDatabaseDAO.updateMedicine(medicine,
+                    editTitle.getText().toString(),
+                    editDesc.getText().toString());
+            setResult(RESULT_OK);
+        }
     }
 
     @Override
     protected void initView() {
         super.initView();
-        editTitle = findViewById(R.id.text_input_edit_title);
-        editDesc = findViewById(R.id.text_input_edit_desc);
-        editDateFrom = findViewById(R.id.text_input_edit_date_from);
-        editDateTo = findViewById(R.id.text_input_edit_date_to);
+        editTitle = findViewById(R.id.edit_text_title);
+        editDesc = findViewById(R.id.edit_text_desc);
+        textEditDateFrom = findViewById(R.id.edit_text_date_from);
+        textEditDateTo = findViewById(R.id.edit_text_date_to);
+    }
 
-        checkBoxMorning = findViewById(R.id.checkbox_edit_morning);
-        checkBoxAfternoon = findViewById(R.id.checkbox_edit_afternoon);
-        checkBoxDinner = findViewById(R.id.checkbox_edit_dinner);
+    @Override
+    protected String setToolbarTitle() {
+        return getIntent().hasExtra("edit_medicine_id") ?
+                getString(R.string.main_edit) : getString(R.string.main_add);
+    }
 
-        morningAlarmContainer = findViewById(R.id.morning_alarm_container);
-        afternoonAlarmContainer = findViewById(R.id.afternoon_alarm_container);
-        dinnerAlarmContainer = findViewById(R.id.dinner_alarm_container);
-        checkBoxMorningAlarm = findViewById(R.id.checkbox_edit_morning_alarm);
-        checkBoxAfternoonAlarm = findViewById(R.id.checkbox_edit_afternoon_alarm);
-        checkBoxDinnerAlarm = findViewById(R.id.checkbox_edit_dinner_alarm);
-        editMorningAlarm = findViewById(R.id.edit_morning_alarm);
-        editAfternoonAlarm = findViewById(R.id.edit_afternoon_alarm);
-        editDinnerAlarm = findViewById(R.id.edit_dinner_alarm);
+    @Override
+    protected int setToolbarViewId() {
+        return R.id.medicine_edit_toolbar;
+    }
 
-        buttonSubmit = findViewById(R.id.button_edit_submit);
+    @Override
+    protected int setContentViewRes() {
+        return R.layout.activity_medicine_edit;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_edit_done) {
+            onBackPressed();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit_toolbar_action, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onPause() {
+        medicineUpdate();
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        medicineUpdate();
+        super.onBackPressed();
     }
 }
