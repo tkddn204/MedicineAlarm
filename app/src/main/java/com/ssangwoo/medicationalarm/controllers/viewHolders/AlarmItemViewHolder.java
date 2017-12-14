@@ -3,7 +3,6 @@ package com.ssangwoo.medicationalarm.controllers.viewHolders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,6 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
     private Context context;
 
     private Alarm alarm;
-    private AlarmInfo alarmInfo;
 
     public AlarmItemViewHolder(Context context, ViewGroup parent) {
         super(LayoutInflater.from(context)
@@ -53,11 +51,10 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
     @Override
     public void bindViewHolder(Alarm alarm) {
         this.alarm = alarm;
-        alarmInfo = AppDatabaseDAO.selectOnlyTodayAlarmInfo(alarm.getId());
 
         setAlarmEnable(alarm.isEnable(), true);
         textAlarmTime.setText(AppDateFormat.ALARM_TIME.format(alarm.getDate()));
-        imageTakeMedicine.setImageResource(alarmInfo.getTakeMedicine().getImageRes());
+        imageTakeMedicine.setImageResource(alarm.getTakeMedicineEnum().getImageRes());
 
         alarmItemContainer.setOnClickListener(this);
         alarmItemContainer.setOnLongClickListener(this);
@@ -82,7 +79,7 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
         AlarmController alarmController = new AlarmController(context);
         if(alarmEnable) {
             AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarm.getId());
-            if (!isInit && !alarmInfo.getTakeMedicine().equals(TakeMedicineEnum.TAKE)) {
+            if (!isInit && !alarm.getTakeMedicineEnum().equals(TakeMedicineEnum.TAKE)) {
                 alarmController.startAlarm(alarm.getDate().getTime(), alarm.getId(), alarmInfo);
                 Toast.makeText(context, String.format(
                         context.getString(R.string.start_alarm_toast),
@@ -105,11 +102,11 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
     }
 
     private void nextTakeMedicineState() {
-        int nextTakeMedicineOrdinal = (alarmInfo.getTakeMedicine().ordinal() + 1)
+        int nextTakeMedicineOrdinal = (alarm.getTakeMedicineEnum().ordinal() + 1)
                 % TakeMedicineEnum.values().length;
         TakeMedicineEnum currentTakeMedicineEnum
                 = TakeMedicineEnum.values()[nextTakeMedicineOrdinal];
-        AppDatabaseDAO.updateTakeMedicine(alarmInfo, currentTakeMedicineEnum);
+        AppDatabaseDAO.updateTakeMedicine(alarm, currentTakeMedicineEnum);
         imageTakeMedicine.setImageResource(currentTakeMedicineEnum.getImageRes());
     }
 

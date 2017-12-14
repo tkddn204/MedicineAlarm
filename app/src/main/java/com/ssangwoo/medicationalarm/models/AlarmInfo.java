@@ -2,13 +2,10 @@ package com.ssangwoo.medicationalarm.models;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
-import com.raizlabs.android.dbflow.annotation.NotNull;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.annotation.TypeConverter;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ssangwoo.medicationalarm.AppDatabase;
-import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 
 import java.util.Date;
 
@@ -31,14 +28,7 @@ public class AlarmInfo extends BaseModel {
     @Column
     Date takeDate = new Date();
 
-    @Column(typeConverter = TakeMedicineConverter.class)
-    TakeMedicineEnum takeMedicine;
-
     public AlarmInfo() { }
-
-    public AlarmInfo(TakeMedicineEnum takeMedicine) {
-        this.takeMedicine = takeMedicine;
-    }
 
     public int getId() {
         return id;
@@ -54,9 +44,6 @@ public class AlarmInfo extends BaseModel {
 
     public void setAlarm(Alarm alarm) {
         this.alarm = alarm;
-        this.pendingRequestNumber = 5378 *
-                (alarm.getMedicine().getId()+1) *
-                (alarm.getId()+1) + id;
     }
 
     public int getPendingRequestNumber() {
@@ -73,13 +60,5 @@ public class AlarmInfo extends BaseModel {
 
     public void setTakeDate(Date takeDate) {
         this.takeDate = takeDate;
-    }
-
-    public TakeMedicineEnum getTakeMedicine() {
-        return takeMedicine;
-    }
-
-    public void setTakeMedicine(TakeMedicineEnum takeMedicine) {
-        this.takeMedicine = takeMedicine;
     }
 }

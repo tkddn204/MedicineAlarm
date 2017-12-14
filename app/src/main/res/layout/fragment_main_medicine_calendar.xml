@@ -6,29 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.ssangwoo.medicationalarm.views.fragments.MedicineCalendarFragment">
-    <TextView
-        android:id="@+id/text_calendar_date"
-        android:text="2017년 10월"
-        android:textColor="@android:color/black"
-        android:textSize="28sp"
-        android:layout_margin="16dp"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <com.github.sundeepk.compactcalendarview.CompactCalendarView
-        android:id="@+id/main_compact_calendar_view"
+    <CalendarView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:padding="10dp"
-        android:layout_margin="20dp"
-        app:compactCalendarTargetHeight="250dp"
-        app:compactCalendarTextSize="18sp"
-        app:compactCalendarBackgroundColor="#ffffff"
-        app:compactCalendarTextColor="#000000"
-        app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimaryDark"
-        app:compactCalendarCurrentDayBackgroundColor="@color/colorPrimary"
-        app:compactCalendarMultiEventIndicatorColor="#fff"
-        />
+        android:layout_height="wrap_content" />
     <View
         android:background="@color/colorPrimary"
         android:layout_width="match_parent"

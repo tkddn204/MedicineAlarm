@@ -46,7 +46,7 @@ public class EditAlarmTimeDialog implements TimePickerDialog.OnTimeSetListener {
                 alarm.getHour(), alarm.getMinutes(), false).show();
     }
 
-    public void make(int hour, int minute) {
+    private void make(int hour, int minute) {
         new TimePickerDialog(context, this,
                 hour, minute, false).show();
     }

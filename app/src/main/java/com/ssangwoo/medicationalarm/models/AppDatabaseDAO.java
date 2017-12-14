@@ -1,9 +1,6 @@
 package com.ssangwoo.medicationalarm.models;
 
-import android.util.Log;
-
 import com.raizlabs.android.dbflow.sql.language.Delete;
-import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 
@@ -100,7 +97,7 @@ public class AppDatabaseDAO {
         alarm.setMedicine(medicine);
         alarm.save();
 
-        AlarmInfo alarmInfo = new AlarmInfo(TakeMedicineEnum.NOT_YET_TAKE);
+        AlarmInfo alarmInfo = new AlarmInfo();
         alarmInfo.setAlarm(alarm);
         alarmInfo.save();
 
@@ -133,13 +130,10 @@ public class AppDatabaseDAO {
         return alarm;
     }
 
-    public static void updateTakeMedicine(AlarmInfo alarmInfo,
+    public static void updateTakeMedicine(Alarm alarm,
                                           TakeMedicineEnum takeMedicineEnum) {
-        alarmInfo.setTakeMedicine(takeMedicineEnum);
-        if(alarmInfo.getTakeMedicine().equals(TakeMedicineEnum.TAKE)) {
-            alarmInfo.setTakeDate(new Date());
-        }
-        alarmInfo.save();
+        alarm.setTakeMedicineEnum(takeMedicineEnum);
+        alarm.save();
     }
 
     public static void updateMedicine(Medicine medicine, String title, String desc) {

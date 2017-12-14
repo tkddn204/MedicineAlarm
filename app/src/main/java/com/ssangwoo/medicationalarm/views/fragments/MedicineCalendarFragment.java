@@ -9,11 +9,7 @@ import android.view.ViewGroup;
 
 import com.ssangwoo.medicationalarm.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MedicineCalendarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+@Deprecated
 public class MedicineCalendarFragment extends Fragment {
 
     public MedicineCalendarFragment() {
@@ -31,8 +27,6 @@ public class MedicineCalendarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 

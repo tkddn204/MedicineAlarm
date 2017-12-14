@@ -36,7 +36,7 @@ public class AlarmController {
     public void startAlarm(long nextAlarmTime, int alarmId, AlarmInfo alarmInfo) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra("alarm_id", alarmId);
-        if (!alarmInfo.getTakeMedicine().equals(TakeMedicineEnum.TAKE)) {
+        if (!alarmInfo.getAlarm().getTakeMedicineEnum().equals(TakeMedicineEnum.TAKE)) {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                     alarmInfo.getPendingRequestNumber(),
                     intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -46,7 +46,7 @@ public class AlarmController {
 
             assert alarmManager != null;
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                             nextAlarmTime, pendingIntent);
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

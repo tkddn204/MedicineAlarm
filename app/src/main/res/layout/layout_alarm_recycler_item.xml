@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:singleLine="true"
-            android:text="asdfasf"
+            android:text="알람 시간"
             android:textColor="@android:color/black"
             android:textSize="24sp" />
 

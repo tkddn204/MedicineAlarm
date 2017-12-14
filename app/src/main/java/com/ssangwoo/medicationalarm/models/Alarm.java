@@ -13,6 +13,7 @@ import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.listener.LoadFromCursorListener;
 import com.ssangwoo.medicationalarm.AppDatabase;
+import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,6 +44,9 @@ public class Alarm extends BaseModel implements LoadFromCursorListener {
 
     @Column(name = "enable")
     boolean isEnable = true;
+
+    @Column(typeConverter = TakeMedicineConverter.class)
+    TakeMedicineEnum takeMedicineEnum = TakeMedicineEnum.NOT_YET_TAKE;
 
     @NotNull
     List<AlarmInfo> alarmInfoList;
@@ -111,6 +115,14 @@ public class Alarm extends BaseModel implements LoadFromCursorListener {
 
     public void setAlarmInfoList(List<AlarmInfo> alarmInfoList) {
         this.alarmInfoList = alarmInfoList;
+    }
+
+    public TakeMedicineEnum getTakeMedicineEnum() {
+        return takeMedicineEnum;
+    }
+
+    public void setTakeMedicineEnum(TakeMedicineEnum takeMedicineEnum) {
+        this.takeMedicineEnum = takeMedicineEnum;
     }
 
     @Override

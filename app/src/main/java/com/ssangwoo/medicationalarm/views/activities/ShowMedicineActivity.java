@@ -26,13 +26,13 @@ import com.ssangwoo.medicationalarm.views.dialogs.EditAlarmTimeDialog;
 
 public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
 
-    TextView textTitle, textDesc;
-    TextView textDate;
-    RecyclerViewEmptySupport showAlarmRecyclerView;
-    AlarmRecyclerViewAdapter alarmAdapter;
-    RelativeLayout recyclerViewEmptyContainer;
+    private TextView textTitle, textDesc;
+    private TextView textDate;
+    private RecyclerViewEmptySupport showAlarmRecyclerView;
+    private AlarmRecyclerViewAdapter alarmAdapter;
+    private RelativeLayout recyclerViewEmptyContainer;
 
-    Medicine medicine;
+    private Medicine medicine;
 
     @Override
     protected void setView() {

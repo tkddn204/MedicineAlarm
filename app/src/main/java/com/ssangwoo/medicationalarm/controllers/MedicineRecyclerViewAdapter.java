@@ -29,8 +29,8 @@ public class MedicineRecyclerViewAdapter
         extends ObservableAdapter<MedicineRecyclerViewAdapter.ViewHolder>
         implements View.OnCreateContextMenuListener {
 
-    Fragment fragment;
-    Context context;
+    private Fragment fragment;
+    private Context context;
 
     public MedicineRecyclerViewAdapter(Fragment fragment, List<Medicine> medicineList) {
         super(Medicine.class);

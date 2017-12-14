@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.ssangwoo.medicationalarm.R;
 
+@Deprecated
 public class MedicineAnalysisFragment extends Fragment {
 
     public MedicineAnalysisFragment() {

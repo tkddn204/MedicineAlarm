@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 
 public abstract class BaseToolbarActivity extends BaseActivity {
 
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
     @Override
     protected void setView() {

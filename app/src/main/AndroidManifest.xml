@@ -26,7 +26,7 @@
 
         <activity
             android:name=".views.activities.SettingActivity"
-            android:label="@string/title_activity_settings"
+            android:label="@string/main_setting"
             android:parentActivityName=".views.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

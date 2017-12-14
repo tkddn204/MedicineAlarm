@@ -30,9 +30,8 @@ import java.util.List;
 
 public class MedicineRecyclerFragment extends Fragment {
 
-    RecyclerViewEmptySupport medicineRecyclerView;
-    MedicineRecyclerViewAdapter adapter;
-    RelativeLayout medicineEmptyContainer;
+    private MedicineRecyclerViewAdapter adapter;
+    private RelativeLayout medicineEmptyContainer;
 
     public MedicineRecyclerFragment() {
         // Required empty public constructor
@@ -48,7 +47,8 @@ public class MedicineRecyclerFragment extends Fragment {
         View view = getLayoutInflater().inflate(
                 R.layout.fragment_main_medicine_recycler, container, false);
 
-        medicineRecyclerView = view.findViewById(R.id.medicine_recycler_view);
+        RecyclerViewEmptySupport medicineRecyclerView =
+                view.findViewById(R.id.medicine_recycler_view);
         medicineEmptyContainer = view.findViewById(R.id.medicine_recycler_empty_container);
 
         medicineRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

@@ -22,7 +22,7 @@ import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
  */
 
 public class AlarmNotification extends ContextWrapper {
-    NotificationManagerCompat notificationManager;
+    private NotificationManagerCompat notificationManager;
 
     public AlarmNotification(Context context) {
         super(context);

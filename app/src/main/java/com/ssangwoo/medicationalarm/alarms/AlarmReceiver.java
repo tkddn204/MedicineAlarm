@@ -16,9 +16,6 @@ import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.alarms.notifications.AlarmNotification;
 
 import java.util.Calendar;
-import java.util.List;
-
-import static com.ssangwoo.medicationalarm.models.AppDatabaseDAO.selectAlarm;
 
 /**
  * Created by ssangwoo on 2017-11-02.
@@ -30,9 +27,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         super();
     }
 
-    private int alarmId;
-    private AlarmInfo alarmInfo;
-
     @Override
     public void onReceive(Context context, Intent intent) {
         AlarmController alarmController = new AlarmController(context);
@@ -40,9 +34,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             alarmController.wakeupDevice();
         }
 
-        alarmId = intent.getIntExtra("alarm_id", -1);
+        int alarmId = intent.getIntExtra("alarm_id", -1);
 
-        alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
+        AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
         Alarm alarm = alarmInfo.getAlarm();
 
         AlarmNotification notification = new AlarmNotification(context);
@@ -52,7 +46,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             notification.cancel(alarmInfo.getId()+1);
             if (action.equals(NotificationActionEnum.TAKE_BUTTON_CLICK_ACTION.getAction())) {
                 // 복용
-                AppDatabaseDAO.updateTakeMedicine(alarmInfo, TakeMedicineEnum.TAKE);
+//                AppDatabaseDAO.updateTakeMedicine(alarmInfo, TakeMedicineEnum.TAKE);
+                AppDatabaseDAO.updateTakeMedicine(alarm, TakeMedicineEnum.TAKE);
 
                 Toast.makeText(context, String.format(
                         context.getString(R.string.take_medicine_toast),
@@ -60,7 +55,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                         Toast.LENGTH_SHORT).show();
             } else if (action.equals(NotificationActionEnum.DO_NOT_TAKE_BUTTON_CLICK_ACTION.getAction())) {
                 // 미복용
-                AppDatabaseDAO.updateTakeMedicine(alarmInfo, TakeMedicineEnum.DO_NOT_TAKE);
+//                AppDatabaseDAO.updateTakeMedicine(alarmInfo, TakeMedicineEnum.DO_NOT_TAKE);
+                AppDatabaseDAO.updateTakeMedicine(alarm, TakeMedicineEnum.DO_NOT_TAKE);
                 Toast.makeText(context, String.format(
                         context.getString(R.string.do_not_take_medicine_toast),
                         alarm.getMedicine().getTitle()),
@@ -74,7 +70,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.MINUTE, reAlarmMinutes);
 
-                AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
                 alarmController.startAlarm(calendar.getTimeInMillis(), alarmId, alarmInfo);
                 Toast.makeText(context, String.format(
                         context.getString(R.string.re_alarm_toast), reAlarmMinutes),

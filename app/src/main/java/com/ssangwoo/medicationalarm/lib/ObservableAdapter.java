@@ -18,12 +18,12 @@ public class ObservableAdapter<VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
 
     protected List<? extends BaseModel> dataList;
-    protected FlowContentObserver mObserver;
+    private FlowContentObserver mObserver;
     private Class<? extends BaseModel> observableModel;
 
     private FlowContentObserver.OnModelStateChangedListener listener;
 
-    public ObservableAdapter(Class<? extends BaseModel> observableModel){
+    protected ObservableAdapter(Class<? extends BaseModel> observableModel){
         this.observableModel = observableModel;
         mObserver = new FlowContentObserver(new Handler(Looper.getMainLooper()));
     }

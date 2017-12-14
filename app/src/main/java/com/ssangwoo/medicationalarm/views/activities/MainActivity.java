@@ -3,7 +3,7 @@ package com.ssangwoo.medicationalarm.views.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.design.widget.AppBarLayout;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,17 +19,16 @@ import com.ssangwoo.medicationalarm.views.fragments.MedicineRecyclerFragment;
 public class MainActivity extends BaseToolbarActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 1010;
-    FloatingActionButton floatingActionButton;
 
-    MedicineRecyclerFragment mainFragment;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void setView() {
         super.setView();
 
-        mainFragment = MedicineRecyclerFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.main_fragment_container, mainFragment)
+                .add(R.id.main_fragment_container,
+                        MedicineRecyclerFragment.newInstance())
                 .commit();
 
         setFloatingActionButtonVisible();
@@ -119,7 +118,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_EXTERNAL:
                 if (grantResults.length > 0
@@ -130,7 +129,6 @@ public class MainActivity extends BaseToolbarActivity {
                     // 권한 거부
                     // 사용자가 해당권한을 거부했을때 해주어야 할 동작을 수행합니다
                 }
-                return;
         }
     }
 }

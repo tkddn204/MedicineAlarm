@@ -18,7 +18,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingStart="16dp"
-        android:text="asfsdfasf"
+        android:text="약 이름"
         android:textColor="@android:color/black"
         android:textSize="36sp"
         android:textStyle="bold" />
@@ -33,7 +33,7 @@
         android:paddingRight="16dp"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
-        android:text="asfsdfasf"
+        android:text="약 설명"
         android:textColor="@color/gray"
         android:textSize="24sp" />
 
@@ -47,7 +47,7 @@
         android:paddingRight="16dp"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
-        android:text="asfsdfasf"
+        android:text="복약기간"
         android:textColor="@android:color/black"
         android:textSize="20sp" />
 
