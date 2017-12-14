@@ -4,12 +4,17 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.alarms.notifications.AlarmNotification;
+import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 import com.ssangwoo.medicationalarm.models.Alarm;
+import com.ssangwoo.medicationalarm.models.AlarmInfo;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 
 import java.util.List;
@@ -28,56 +33,55 @@ public class AlarmController {
         this.context = context;
     }
 
-    public static void startAlarm(Context context, long nextAlarmTime, int medicineId, int alarmId) {
-
-        // TODO : 스태틱으로 해보기
-    }
-
-    public void startAlarm(long nextAlarmTime, int medicineId, int alarmId) {
+    public void startAlarm(long nextAlarmTime, int alarmId, AlarmInfo alarmInfo) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra("alarm_id", alarmId);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
-                        * medicineId * alarmId,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (!alarmInfo.getTakeMedicine().equals(TakeMedicineEnum.TAKE)) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                    alarmInfo.getPendingRequestNumber(),
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        AlarmManager alarmManager =
-                (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            AlarmManager alarmManager =
+                    (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                assert alarmManager != null;
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                        nextAlarmTime, pendingIntent);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                assert alarmManager != null;
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    assert alarmManager != null;
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                            nextAlarmTime, pendingIntent);
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    assert alarmManager != null;
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
+                } else {
+                    assert alarmManager != null;
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
+                }
+                intent = new Intent("android.intent.action.ALARM_CHANGED");
+                intent.putExtra("alarm", true);
+                context.sendBroadcast(intent);
             } else {
+                AlarmManager.AlarmClockInfo alarmClockInfo
+                        = new AlarmManager.AlarmClockInfo(nextAlarmTime, pendingIntent);
                 assert alarmManager != null;
-                alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
+                alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
             }
-            intent = new Intent("android.intent.action.ALARM_CHANGED");
-            intent.putExtra("alarm", true);
-            context.sendBroadcast(intent);
-        } else {
-            AlarmManager.AlarmClockInfo alarmClockInfo
-                    = new AlarmManager.AlarmClockInfo(nextAlarmTime, pendingIntent);
-            assert alarmManager != null;
-            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
         }
     }
 
-    public void cancelAlarm(int medicineId, int alarmId) {
-
+    public void cancelAlarm(int alarmId) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra("alarm_id", alarmId);
+        AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
-                        * medicineId * alarmId,
+                alarmInfo.getPendingRequestNumber(),
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         assert alarmManager != null;
         alarmManager.cancel(pendingIntent);
+        new AlarmNotification(context).cancel(alarmInfo.getPendingRequestNumber());
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             intent = new Intent("android.intent.action.ALARM_CHANGED");
             intent.putExtra("alarmSet", false);
@@ -87,7 +91,32 @@ public class AlarmController {
         }
     }
 
-    public void wakeupAlarm() {
+    public void resetAlarm() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean isAlarmOn = preferences.getBoolean(
+                context.getString(R.string.pref_key_alarm_switch), true);
+
+        List<Alarm> alarmList = AppDatabaseDAO.selectAllAlarmList();
+        if (!alarmList.isEmpty()) {
+            for (Alarm alarm : alarmList) {
+                if (alarm.isEnable()) {
+                    AppDatabaseDAO.nextAlarmDateUpdate(alarm.getId());
+                    AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarm.getId());
+                    cancelAlarm(alarmInfo.getAlarm().getId());
+                    if (isAlarmOn) {
+                        startAlarm(alarm.getDate().getTime(),
+                                alarmInfo.getAlarm().getId(), alarmInfo);
+                    }
+                }
+            }
+        }
+    }
+
+//    public void stopAlarmSoundService() {
+//        context.stopService(new Intent(context, AlarmSoundService.class));
+//    }
+
+    public void wakeupDevice() {
         PowerManager powerManager =
                 (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         assert powerManager != null;
@@ -98,18 +127,10 @@ public class AlarmController {
         wakeLock.acquire(WAKELOCK_ACQUIRE_TIMEOUT);
     }
 
-    public void stopAlarmSoundService() {
-        context.stopService(new Intent(context, AlarmSoundService.class));
-    }
-
-    public void resetAlarm() {
-        List<Alarm> alarmList = AppDatabaseDAO.selectAllAlarmList();
-        if(!alarmList.isEmpty()) {
-            for (Alarm alarm : alarmList) {
-                AppDatabaseDAO.nextAlarmDateUpdate(alarm.getId());
-                cancelAlarm(alarm.getMedicine().getId(), alarm.getId());
-                startAlarm(alarm.getDate().getTime(), alarm.getMedicine().getId(), alarm.getId());
-            }
-        }
+    public boolean isDeviceScreenOn() {
+        PowerManager powerManager =
+                (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        assert powerManager != null;
+        return powerManager.isScreenOn();
     }
 }

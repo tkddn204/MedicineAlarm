@@ -1,12 +1,18 @@
 package com.ssangwoo.medicationalarm.models;
 
+import android.database.Cursor;
+import android.support.annotation.NonNull;
+
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.NotNull;
 import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.raizlabs.android.dbflow.structure.listener.LoadFromCursorListener;
+import com.ssangwoo.medicationalarm.AppDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,12 +24,13 @@ import java.util.Locale;
  */
 
 @Table(database = AppDatabase.class)
-public class Alarm extends BaseModel {
+public class Alarm extends BaseModel implements LoadFromCursorListener {
     @Column
     @PrimaryKey(autoincrement = true)
     int id;
 
     @ForeignKey(stubbedRelationship = true)
+    @NotNull
     Medicine medicine;
 
     @Column
@@ -38,12 +45,12 @@ public class Alarm extends BaseModel {
     @Column(name = "enable")
     boolean isEnable = true;
 
+    @NotNull
     List<AlarmInfo> alarmInfoList;
 
     public Alarm() {}
 
-    public Alarm(Medicine medicine, int hour, int minutes) {
-        this.medicine = medicine;
+    public Alarm(int hour, int minutes) {
         this.hour = hour;
         this.minutes = minutes;
     }
@@ -92,7 +99,7 @@ public class Alarm extends BaseModel {
         isEnable = enable;
     }
 
-    @OneToMany(methods = OneToMany.Method.ALL)
+    @OneToMany(methods = OneToMany.Method.ALL, variableName = "alarmInfoList")
     public List<AlarmInfo> getAlarmInfoList() {
         if (alarmInfoList == null || alarmInfoList.isEmpty()) {
             alarmInfoList = new Select()
@@ -112,5 +119,10 @@ public class Alarm extends BaseModel {
         SimpleDateFormat alarmTimeFormat
                 = new SimpleDateFormat("aa hh:mm", Locale.KOREA);
         return alarmTimeFormat.format(date);
+    }
+
+    @Override
+    public void onLoadFromCursor(@NonNull Cursor cursor) {
+        getAlarmInfoList();
     }
 }

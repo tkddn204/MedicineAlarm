@@ -6,6 +6,7 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ssangwoo.medicationalarm.AppDatabase;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 
 import java.util.Date;
@@ -85,7 +86,7 @@ public class Medicine extends BaseModel {
         this.dateTo = dateTo;
     }
 
-    @OneToMany(methods = OneToMany.Method.ALL)
+    @OneToMany(methods = OneToMany.Method.ALL, variableName = "alarmList")
     public List<Alarm> getAlarmList() {
         if (alarmList == null || alarmList.isEmpty()) {
             alarmList = new Select()

@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.alarms.AlarmController;
-import com.ssangwoo.medicationalarm.controllers.interfaces.UpdateAlarmRecyclerInterface;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 import com.ssangwoo.medicationalarm.models.Alarm;
 import com.ssangwoo.medicationalarm.models.AlarmInfo;
@@ -35,17 +34,14 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
 
     private Context context;
 
-    private UpdateAlarmRecyclerInterface updateInterface;
-
     private Alarm alarm;
 
-    public AlarmItemViewHolder(Context context, ViewGroup parent,
-                               UpdateAlarmRecyclerInterface updateInterface) {
+    public AlarmItemViewHolder(Context context, ViewGroup parent) {
         super(LayoutInflater.from(context)
                 .inflate(R.layout.layout_alarm_recycler_item,
                         parent, false));
         this.context = context;
-        this.updateInterface = updateInterface;
+
         alarmItemContainer = itemView.findViewById(R.id.alarm_item_container);
         imageAlarmSwitch = itemView.findViewById(R.id.image_alarm_switch);
         textAlarmTime = itemView.findViewById(R.id.text_alarm_time);
@@ -59,14 +55,12 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
         alarmItemContainer.setOnClickListener(this);
         alarmItemContainer.setOnLongClickListener(this);
 
-        setAlarmEnable(alarm.isEnable(), true);
         imageAlarmSwitch.setOnClickListener(this);
 
         textAlarmTime.setText(AppDateFormat.ALARM_TIME.format(alarm.getDate()));
 
         setTakeMedicineState();
         imageTakeMedicine.setOnClickListener(this);
-        //TODO : 알람 누르는 거에 따라 바뀌는 옵저버 달아주기
     }
 
     private void setTakeMedicineState() {
@@ -79,9 +73,7 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.alarm_item_container) {
-            // TODO : 알람 없애기 - 리셋에서 isEnable 체크 외에 많은것
-            new EditAlarmTimeDialog(context, alarm.getMedicine(),
-                    updateInterface).make(alarm);
+            new EditAlarmTimeDialog(context, alarm.getMedicine()).make(alarm);
         } else if(view.getId() == R.id.image_alarm_switch) {
             setAlarmEnable(!alarm.isEnable(), false);
         } else if(view.getId() == R.id.image_alarm_take_medicine) {
@@ -93,16 +85,16 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
         alarm.setEnable(alarmEnable);
         AlarmController alarmController = new AlarmController(context);
         if(alarmEnable) {
-            alarmController.startAlarm(
-                    alarm.getDate().getTime(), alarm.getMedicine().getId(), alarm.getId());
-            if(!isInit) {
+            AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarm.getId());
+            if (!isInit && !alarmInfo.getTakeMedicine().equals(TakeMedicineEnum.TAKE)) {
+                alarmController.startAlarm(alarm.getDate().getTime(), alarm.getId(), alarmInfo);
                 Toast.makeText(context, String.format(
                         context.getString(R.string.start_alarm_toast),
                         AppDateFormat.ALARM_TIME.format(alarm.getDate())),
                         Toast.LENGTH_SHORT).show();
             }
         } else {
-            alarmController.cancelAlarm(alarm.getMedicine().getId(), alarm.getId());
+            alarmController.cancelAlarm(alarm.getId());
             if(!isInit) {
                 Toast.makeText(context, String.format(
                         context.getString(R.string.stop_alarm_toast),
@@ -135,10 +127,7 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
                     .setPositiveButton(context.getText(R.string.alarm_delete_yes), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            int medicineId = alarm.getMedicine().getId();
                             AppDatabaseDAO.deleteAlarm(alarm.getId());
-                            updateInterface.update(medicineId);
-
                         }
                     })
                     .setNegativeButton(context.getText(R.string.alarm_delete_cancel), new DialogInterface.OnClickListener() {

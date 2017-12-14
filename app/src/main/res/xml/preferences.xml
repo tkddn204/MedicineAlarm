@@ -3,15 +3,16 @@
 
     <SwitchPreference
         android:defaultValue="true"
-        android:key="alarm_switch"
+        android:key="@string/pref_key_alarm_switch"
         android:switchTextOff="OFF"
         android:switchTextOn="ON"
+        android:visibility="gone"
         android:summary="@string/pref_description_alarm_switch"
         android:title="@string/pref_title_alarm_switch" />
 
     <ListPreference
         android:defaultValue="10"
-        android:key="re_alarm_list"
+        android:key="@string/pref_key_re_alarm_list"
         android:entries="@array/pref_re_alarm_titles"
         android:entryValues="@array/pref_re_alarm_values"
         android:negativeButtonText="@null"

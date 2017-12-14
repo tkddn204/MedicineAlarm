@@ -1,9 +1,7 @@
 package com.ssangwoo.medicationalarm.controllers;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.ssangwoo.medicationalarm.controllers.interfaces.UpdateAlarmRecyclerInterface;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.AlarmAddItemViewHolder;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.AlarmItemViewHolder;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.BindingViewHolder;
@@ -16,8 +14,7 @@ import java.util.List;
  * Created by ssangwoo on 2017-10-29.
  */
 
-public class AlarmRecyclerViewAdapter extends ObserverableAdapter<BindingViewHolder>
-        implements UpdateAlarmRecyclerInterface {
+public class AlarmRecyclerViewAdapter extends ObserverableAdapter<BindingViewHolder> {
     private static final int LIST_ADD_ITEM = 10;
 
     public AlarmRecyclerViewAdapter(List<Alarm> alarmList) {
@@ -29,11 +26,9 @@ public class AlarmRecyclerViewAdapter extends ObserverableAdapter<BindingViewHol
     public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case LIST_ADD_ITEM:
-                return new AlarmAddItemViewHolder(parent.getContext(), parent,
-                        this);
+                return new AlarmAddItemViewHolder(parent.getContext(), parent);
             default:
-                return new AlarmItemViewHolder(parent.getContext(), parent,
-                        this);
+                return new AlarmItemViewHolder(parent.getContext(), parent);
         }
     }
 
@@ -62,8 +57,4 @@ public class AlarmRecyclerViewAdapter extends ObserverableAdapter<BindingViewHol
         return dataList.isEmpty() ? 0 : dataList.size() + 1;
     }
 
-    @Override
-    public void update(int medicineId) {
-        notifyDataSetChanged();
-    }
 }

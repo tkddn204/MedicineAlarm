@@ -97,8 +97,7 @@ public class SettingFragment extends PreferenceFragment
                 }
             }
 
-        } else if(value instanceof Boolean) {
-            // sdaf
+        //} else if(value instanceof Boolean) {
         } else {
             preference.setSummary(stringValue);
         }

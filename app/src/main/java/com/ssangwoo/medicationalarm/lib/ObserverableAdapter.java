@@ -2,14 +2,10 @@ package com.ssangwoo.medicationalarm.lib;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
-import com.raizlabs.android.dbflow.sql.language.SQLOperator;
-import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.List;
@@ -19,11 +15,13 @@ import java.util.List;
  */
 
 public class ObserverableAdapter <VH extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter<VH> implements FlowContentObserver.OnModelStateChangedListener {
+        extends RecyclerView.Adapter<VH> {
 
     protected List<? extends BaseModel> dataList;
     protected FlowContentObserver mObserver;
     private Class<? extends BaseModel> observableModel;
+
+    private FlowContentObserver.OnModelStateChangedListener listener;
 
     public ObserverableAdapter(Class<? extends BaseModel> observableModel){
         this.observableModel = observableModel;
@@ -34,21 +32,22 @@ public class ObserverableAdapter <VH extends RecyclerView.ViewHolder>
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mObserver.registerForContentChanges(recyclerView.getContext(), observableModel);
-        mObserver.addModelChangeListener(this);
+        mObserver.addModelChangeListener(listener);
     }
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         mObserver.unregisterForContentChanges(recyclerView.getContext());
-        mObserver.removeModelChangeListener(this);
+        mObserver.removeModelChangeListener(listener);
         super.onDetachedFromRecyclerView(recyclerView);
     }
 
-    @Override
-    public void onModelStateChanged(@Nullable Class<?> table, BaseModel.Action action,
-                                    @NonNull SQLOperator[] primaryKeyValues) {
-        dataList = new Select().from(observableModel).queryList();
-        this.notifyDataSetChanged();
+    public void setListener(FlowContentObserver.OnModelStateChangedListener listener) {
+        this.listener = listener;
+    }
+
+    public void setDataList(List<? extends BaseModel> dataList) {
+        this.dataList = dataList;
     }
 
     @Override

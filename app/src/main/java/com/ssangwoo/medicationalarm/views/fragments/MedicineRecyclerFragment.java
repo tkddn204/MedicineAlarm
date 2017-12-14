@@ -3,6 +3,8 @@ package com.ssangwoo.medicationalarm.views.fragments;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,14 +15,16 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
+import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
+import com.raizlabs.android.dbflow.sql.language.SQLOperator;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.controllers.MedicineRecyclerViewAdapter;
 import com.ssangwoo.medicationalarm.lib.RecyclerViewEmptySupport;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
-import com.ssangwoo.medicationalarm.models.Medicine_Table;
 import com.ssangwoo.medicationalarm.views.activities.EditMedicineActivity;
+import com.ssangwoo.medicationalarm.views.activities.MainActivity;
 
 import java.util.List;
 
@@ -56,47 +60,40 @@ public class MedicineRecyclerFragment extends Fragment {
                 int requestCode = getResources().getInteger(R.integer.request_edit_medicine);
                 Intent intent = new Intent(getContext(),
                         EditMedicineActivity.class);
-                Medicine medicine = new Medicine();
-                medicine.insert();
-                intent.putExtra("medicine_id", medicine.getId());
                 startActivityForResult(intent, requestCode);
             }
         });
 
         List<Medicine> medicineList = AppDatabaseDAO.selectMedicineList();
         adapter = new MedicineRecyclerViewAdapter(this, medicineList);
+        adapter.setListener(new FlowContentObserver.OnModelStateChangedListener() {
+            @Override
+            public void onModelStateChanged(@Nullable Class<?> table, BaseModel.Action action,
+                                            @NonNull SQLOperator[] primaryKeyValues) {
+                adapter.setDataList(AppDatabaseDAO.selectMedicineList());
+                adapter.notifyDataSetChanged();
+            }
+        });
         medicineRecyclerView.setAdapter(adapter);
 
         return view;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == getResources().getInteger(R.integer.request_edit_medicine) ||
-                requestCode == getResources().getInteger(R.integer.request_show_medicine)) {
-//            if (resultCode == RESULT_OK) {
-//            }
-            adapter.notifyDataSetChanged();
-            //remakeMedicineList();
-        }
-    }
-
-//    private void remakeMedicineList() {
-//        List<Medicine> medicineList =
-//                new Select().from(Medicine.class).queryList();
-//        adapter = new MedicineRecyclerViewAdapter(this, medicineList);
-//        medicineRecyclerView.setAdapter(adapter);
-////                adapter.notifyDataSetChanged();
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == getResources().getInteger(R.integer.request_show_medicine)) {
+//            adapter.notifyDataSetChanged();
+//        }
 //    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         final int medicineId = adapter.getMedicineId();
-        Medicine medicine = new Select().from(Medicine.class)
-                .where(Medicine_Table.id.eq(medicineId)).querySingle();
+        Medicine medicine = AppDatabaseDAO.selectMedicine(medicineId);
         if (medicine == null) {
             Toast.makeText(getContext(),
-                    "약 정보를 불러올 수 없습니다!", Toast.LENGTH_SHORT).show();
+                    getString(R.string.error_loading_medicine), Toast.LENGTH_SHORT).show();
+            return false;
         }
 
         switch (item.getItemId()) {
@@ -106,7 +103,6 @@ public class MedicineRecyclerFragment extends Fragment {
                 startActivityForResult(intent, getResources().getInteger(R.integer.request_edit_medicine));
                 break;
             case R.id.action_show_delete:
-                assert medicine != null;
                 new AlertDialog.Builder(getContext())
                         .setTitle(medicine.getTitle() + " 삭제")
                         .setMessage(getString(R.string.show_delete_message))
@@ -114,8 +110,7 @@ public class MedicineRecyclerFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 AppDatabaseDAO.deleteMedicine(medicineId);
-                                //remakeMedicineList();
-                                adapter.notifyDataSetChanged();
+                                ((MainActivity)getActivity()).setFloatingActionButtonVisible();
                             }
                         }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override

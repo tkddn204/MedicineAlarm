@@ -1,4 +1,4 @@
-package com.ssangwoo.medicationalarm.models;
+package com.ssangwoo.medicationalarm;
 
 import com.raizlabs.android.dbflow.annotation.Database;
 

@@ -2,9 +2,11 @@ package com.ssangwoo.medicationalarm.models;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.NotNull;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.ssangwoo.medicationalarm.AppDatabase;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 
 import java.util.Date;
@@ -20,6 +22,7 @@ public class AlarmInfo extends BaseModel {
     int id;
 
     @ForeignKey(stubbedRelationship = true)
+    @NotNull
     Alarm alarm;
 
     @Column
@@ -31,17 +34,17 @@ public class AlarmInfo extends BaseModel {
     @Column(typeConverter = TakeMedicineConverter.class)
     TakeMedicineEnum takeMedicine = TakeMedicineEnum.NOT_YET_TAKE;
 
-    public AlarmInfo() {}
+    public AlarmInfo() { }
 
     public AlarmInfo(Alarm alarm) {
         this.alarm = alarm;
-        pendingRequestNumber = 5378 *
+        this.pendingRequestNumber = 5378 *
                 (alarm.getMedicine().getId()+1) *
                 (alarm.getId()+1) + id;
     }
 
     public AlarmInfo(Alarm alarm, Date takeDate) {
-        this.alarm = alarm;
+        this(alarm);
         this.takeDate = takeDate;
     }
 

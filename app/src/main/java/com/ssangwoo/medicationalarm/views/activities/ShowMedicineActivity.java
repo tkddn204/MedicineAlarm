@@ -2,6 +2,8 @@ package com.ssangwoo.medicationalarm.views.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
@@ -10,20 +12,18 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
+import com.raizlabs.android.dbflow.sql.language.SQLOperator;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.controllers.AlarmRecyclerViewAdapter;
-import com.ssangwoo.medicationalarm.controllers.interfaces.UpdateAlarmRecyclerInterface;
 import com.ssangwoo.medicationalarm.lib.RecyclerViewEmptySupport;
-import com.ssangwoo.medicationalarm.models.Alarm;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 import com.ssangwoo.medicationalarm.views.dialogs.EditAlarmTimeDialog;
 
-import java.util.List;
-
-public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
-    implements UpdateAlarmRecyclerInterface {
+public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
 
     TextView textTitle, textDesc;
     TextView textDate;
@@ -53,13 +53,20 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
         showAlarmRecyclerView.setEmptyView(recyclerViewEmptyContainer);
 
         alarmAdapter = new AlarmRecyclerViewAdapter(medicine.getAlarmList());
+        alarmAdapter.setListener(new FlowContentObserver.OnModelStateChangedListener() {
+            @Override
+            public void onModelStateChanged(@Nullable Class<?> table, BaseModel.Action action,
+                                            @NonNull SQLOperator[] primaryKeyValues) {
+                alarmAdapter.setDataList(AppDatabaseDAO.selectAlarmList(medicineId));
+                alarmAdapter.notifyDataSetChanged();
+            }
+        });
         showAlarmRecyclerView.setAdapter(alarmAdapter);
 
         recyclerViewEmptyContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new EditAlarmTimeDialog(ShowMedicineActivity.this,
-                        medicine, ShowMedicineActivity.this).make();
+                new EditAlarmTimeDialog(ShowMedicineActivity.this, medicine).make();
             }
         });
     }
@@ -79,7 +86,6 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
                         public void onClick(DialogInterface dialogInterface, int i) {
                             int medicineId = medicine.getId();
                             AppDatabaseDAO.deleteMedicine(medicineId);
-                            update(medicineId);
                             setResult(RESULT_OK);
                             finish();
                         }
@@ -117,7 +123,6 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_show_toolbar_action, menu);
-        // MenuItem item = menu.findItem(R.id.action_setting);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -134,13 +139,5 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity
     @Override
     protected int setContentViewRes() {
         return R.layout.activity_show_medicine;
-    }
-
-    @Override
-    public void update(int medicineId) {
-        alarmAdapter.notifyDataSetChanged();
-//        List<Alarm> alarmList = AppDatabaseDAO.selectAllAlarmList(medicineId);
-//        alarmAdapter = new AlarmRecyclerViewAdapter(alarmList);
-//        showAlarmRecyclerView.setAdapter(alarmAdapter);
     }
 }

@@ -3,14 +3,16 @@ package com.ssangwoo.medicationalarm.alarms;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.enums.NotificationActionEnum;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 import com.ssangwoo.medicationalarm.models.Alarm;
+import com.ssangwoo.medicationalarm.models.AlarmInfo;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
-import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.alarms.notifications.AlarmNotification;
 
 import java.util.Calendar;
@@ -25,66 +27,62 @@ public class AlarmReceiver extends BroadcastReceiver {
         super();
     }
 
-    private Context context;
-
     private int alarmId;
-    private Medicine medicine;
-    private AlarmNotification alarmNotification;
+    private AlarmInfo alarmInfo;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        this.context = context;
         AlarmController alarmController = new AlarmController(context);
-        alarmController.wakeupAlarm();
+        if(!alarmController.isDeviceScreenOn()) {
+            alarmController.wakeupDevice();
+        }
 
         alarmId = intent.getIntExtra("alarm_id", -1);
-        assert alarmId != -1;
-        Alarm alarm = AppDatabaseDAO.selectAlarm(alarmId);
-        medicine = alarm.getMedicine();
-        alarmNotification = new AlarmNotification(context);
+
+        alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
+        Alarm alarm = alarmInfo.getAlarm();
+
+        AlarmNotification notification = new AlarmNotification(context);
 
         String action = intent.getAction();
         if (action != null) {
+            notification.cancel(alarmInfo.getId()+1);
             if (action.equals(NotificationActionEnum.TAKE_BUTTON_CLICK_ACTION.getAction())) {
                 // 복용
-                AppDatabaseDAO.updateTakeMedicine(
-                        AppDatabaseDAO.selectTodayAlarmInfo(alarmId), TakeMedicineEnum.TAKE);
-                alarmNotification.cancel(
-                        context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
-                                * (medicine.getId()+1) * (alarmId+1));
+                AppDatabaseDAO.updateTakeMedicine(alarmInfo, TakeMedicineEnum.TAKE);
+                Toast.makeText(context, String.format(
+                        context.getString(R.string.take_medicine_toast),
+                        alarm.getMedicine().getTitle(), alarm),
+                        Toast.LENGTH_SHORT).show();
             } else if (action.equals(NotificationActionEnum.DO_NOT_TAKE_BUTTON_CLICK_ACTION.getAction())) {
                 // 미복용
-                AppDatabaseDAO.updateTakeMedicine(
-                        AppDatabaseDAO.selectTodayAlarmInfo(alarmId), TakeMedicineEnum.DO_NOT_TAKE);
-                alarmNotification.cancel(
-                        context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
-                                * (medicine.getId()+1) * (alarmId+1));
+                AppDatabaseDAO.updateTakeMedicine(alarmInfo, TakeMedicineEnum.DO_NOT_TAKE);
+                Toast.makeText(context, String.format(
+                        context.getString(R.string.do_not_take_medicine_toast),
+                        alarm.getMedicine().getTitle()),
+                        Toast.LENGTH_SHORT).show();
             } else if (action.equals(NotificationActionEnum.RE_ALARM_BUTTON_CLICK_ACTION.getAction())) {
                 // 다시알림
-                // TODO : 다시알림 설정에 들어가서 바꾸는거
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                int reAlarmMinutes = Integer.parseInt(preferences.getString(
+                        context.getString(R.string.pref_key_re_alarm_list), "10"));
+
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.MINUTE, 10);
-                alarmController.startAlarm(calendar.getTimeInMillis(), medicine.getId(), alarmId);
+                calendar.add(Calendar.MINUTE, reAlarmMinutes);
+
+                AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
+                alarmController.startAlarm(calendar.getTimeInMillis(), alarmId, alarmInfo);
                 Toast.makeText(context, String.format(
-                        context.getString(R.string.re_alarm_toast), 10), Toast.LENGTH_SHORT).show();
-                alarmNotification.cancel(
-                        context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
-                                * (medicine.getId()+1) * (alarmId+1));
+                        context.getString(R.string.re_alarm_toast), reAlarmMinutes),
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
         } else {
             context.startService(new Intent(context, AlarmSoundService.class));
-            firstNotificationAlarm();
+            notification.makeNotification(context, alarm.getMedicine(), alarmId);
         }
         AppDatabaseDAO.nextAlarmDateUpdate(alarm);
         alarmController.resetAlarm();
-        //alarmController.startAlarm(alarm.getDate().getTime(), alarmId);
     }
 
-    private void firstNotificationAlarm() {
-        alarmNotification.notify(
-                context.getResources().getInteger(R.integer.request_medicine_alarm_broadcast)
-                        * (medicine.getId()+1) * (alarmId+1),
-                alarmNotification.makeNotification(medicine, alarmId));
-    }
 }

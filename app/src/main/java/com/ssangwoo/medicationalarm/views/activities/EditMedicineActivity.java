@@ -24,18 +24,17 @@ import java.util.Date;
 public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
         implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
-    EditText editTitle, editDesc;
-    TextView textEditDateFrom, textEditDateTo;
+    private EditText editTitle, editDesc;
+    private TextView textEditDateFrom, textEditDateTo;
 
-    int medicineId;
-    Medicine medicine;
+    private Medicine medicine;
 
     @Override
     protected void setView() {
         super.setView();
 
         if (getIntent().hasExtra("edit_medicine_id")) {
-            medicineId = getIntent().getIntExtra("edit_medicine_id", -1);
+            int medicineId = getIntent().getIntExtra("edit_medicine_id", -1);
             medicine = AppDatabaseDAO.selectMedicine(medicineId);
             if (medicine != null) {
                 editTitle.setText(medicine.getTitle());
@@ -47,8 +46,7 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
                         AppDateFormat.DATE_YEAR_TO.format(medicine.getDateTo()));
             }
         } else {
-            medicineId = getIntent().getIntExtra("medicine_id", -1);
-            medicine = AppDatabaseDAO.selectMedicine(medicineId);
+            medicine = AppDatabaseDAO.createMedicine();
             if (medicine != null) {
                 textEditDateFrom.setText(AppDateFormat.DATE_YEAR_FROM.format(medicine.getDateFrom()));
                 textEditDateTo.setText(AppDateFormat.DATE_YEAR_TO.format(medicine.getDateTo()));
@@ -115,7 +113,7 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
             textEditDateFrom.setText(
                     AppDateFormat.DATE_YEAR_FROM.format(pickDate));
         } else {
-            if (medicine.getDateTo().after(pickDate)) {
+            if (medicine.getDateFrom().after(pickDate)) {
                 makeAlertDialog(getString(R.string.error_date_to));
                 return;
             }
@@ -147,11 +145,13 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
     private void medicineUpdate() {
         if (editTitle.getText().toString().isEmpty() &&
                 editDesc.getText().toString().isEmpty()) {
-            AppDatabaseDAO.deleteMedicine(medicineId);
+            AppDatabaseDAO.deleteMedicine(medicine.getId());
+        } else {
+            AppDatabaseDAO.updateMedicine(medicine,
+                    editTitle.getText().toString(),
+                    editDesc.getText().toString());
+            setResult(RESULT_OK);
         }
-        AppDatabaseDAO.updateMedicine(medicine,
-                editTitle.getText().toString(),
-                editDesc.getText().toString());
     }
 
     @Override
@@ -191,7 +191,6 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_edit_toolbar_action, menu);
-        // MenuItem item = menu.findItem(R.id.action_setting);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -204,7 +203,6 @@ public class EditMedicineActivity extends BaseToolbarWithBackButtonActivity
     @Override
     public void onBackPressed() {
         medicineUpdate();
-        setResult(RESULT_OK);
         super.onBackPressed();
     }
 }

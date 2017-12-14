@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.controllers.interfaces.UpdateAlarmRecyclerInterface;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.views.dialogs.EditAlarmTimeDialog;
 
@@ -21,15 +20,11 @@ public class AlarmAddItemViewHolder extends BindingViewHolder<Medicine> {
     private TextView textAlarmLimit;
     private ImageView imageAlarmLimit;
 
-    private UpdateAlarmRecyclerInterface updateInterface;
-
-    public AlarmAddItemViewHolder(Context context, ViewGroup parent,
-                                  UpdateAlarmRecyclerInterface updateInterface) {
+    public AlarmAddItemViewHolder(Context context, ViewGroup parent) {
         super(LayoutInflater.from(context)
                 .inflate(R.layout.layout_alarm_add_recycler_item,
                         parent, false));
         this.context = context;
-        this.updateInterface = updateInterface;
 
         textAlarmLimit = itemView.findViewById(R.id.text_alarm_limit);
         imageAlarmLimit = itemView.findViewById(R.id.image_alarm_add);
@@ -43,8 +38,7 @@ public class AlarmAddItemViewHolder extends BindingViewHolder<Medicine> {
             imageAlarmLimit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new EditAlarmTimeDialog(context, medicine, updateInterface)
-                            .make();
+                    new EditAlarmTimeDialog(context, medicine).make();
                 }
             });
         } else {

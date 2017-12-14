@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,14 +13,12 @@ import android.view.View;
 
 import com.ssangwoo.medicationalarm.R;
 import com.ssangwoo.medicationalarm.alarms.AlarmController;
-import com.ssangwoo.medicationalarm.models.Medicine;
+import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.views.fragments.MedicineRecyclerFragment;
 
 public class MainActivity extends BaseToolbarActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 1010;
-    AppBarLayout appBarLayout;
-    CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton floatingActionButton;
 
     MedicineRecyclerFragment mainFragment;
@@ -29,38 +26,38 @@ public class MainActivity extends BaseToolbarActivity {
     @Override
     protected void setView() {
         super.setView();
-        collapsingToolbarLayout.setTitleEnabled(false);
 
         mainFragment = MedicineRecyclerFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.main_fragment_container, mainFragment)
                 .commit();
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if(verticalOffset == 0) {
-                    floatingActionButton.show();
-                } else {
-                    floatingActionButton.hide();
-                }
-            }
-        });
 
+        setFloatingActionButtonVisible();
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int requestCode = getResources().getInteger(R.integer.request_edit_medicine);
                 Intent intent = new Intent(getApplicationContext(),
                         EditMedicineActivity.class);
-                Medicine medicine = new Medicine();
-                medicine.insert();
-                intent.putExtra("medicine_id", medicine.getId());
-                mainFragment.startActivityForResult(intent, requestCode);
+                startActivityForResult(intent, requestCode);
             }
         });
 
         requestPermission();
         new AlarmController(getApplicationContext()).resetAlarm();
+    }
+
+    public void setFloatingActionButtonVisible() {
+        if(AppDatabaseDAO.selectMedicineList().isEmpty()) {
+            floatingActionButton.hide();
+        } else {
+            floatingActionButton.show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setFloatingActionButtonVisible();
     }
 
     @Override
@@ -81,8 +78,6 @@ public class MainActivity extends BaseToolbarActivity {
     @Override
     protected void initView() {
         super.initView();
-        appBarLayout = findViewById(R.id.main_app_bar_layout);
-        collapsingToolbarLayout = findViewById(R.id.main_collapsing_toolbar_layout);
         floatingActionButton = findViewById(R.id.medicine_floating_action_button);
     }
 
