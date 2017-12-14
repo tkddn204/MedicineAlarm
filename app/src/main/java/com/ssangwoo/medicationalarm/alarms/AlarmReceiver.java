@@ -16,6 +16,9 @@ import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
 import com.ssangwoo.medicationalarm.alarms.notifications.AlarmNotification;
 
 import java.util.Calendar;
+import java.util.List;
+
+import static com.ssangwoo.medicationalarm.models.AppDatabaseDAO.selectAlarm;
 
 /**
  * Created by ssangwoo on 2017-11-02.
@@ -50,6 +53,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             if (action.equals(NotificationActionEnum.TAKE_BUTTON_CLICK_ACTION.getAction())) {
                 // 복용
                 AppDatabaseDAO.updateTakeMedicine(alarmInfo, TakeMedicineEnum.TAKE);
+
                 Toast.makeText(context, String.format(
                         context.getString(R.string.take_medicine_toast),
                         alarm.getMedicine().getTitle(), alarm),

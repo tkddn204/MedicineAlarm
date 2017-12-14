@@ -3,6 +3,7 @@ package com.ssangwoo.medicationalarm.controllers.viewHolders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
     private Context context;
 
     private Alarm alarm;
+    private AlarmInfo alarmInfo;
 
     public AlarmItemViewHolder(Context context, ViewGroup parent) {
         super(LayoutInflater.from(context)
@@ -51,23 +53,17 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
     @Override
     public void bindViewHolder(Alarm alarm) {
         this.alarm = alarm;
+        alarmInfo = AppDatabaseDAO.selectOnlyTodayAlarmInfo(alarm.getId());
+
         setAlarmEnable(alarm.isEnable(), true);
+        textAlarmTime.setText(AppDateFormat.ALARM_TIME.format(alarm.getDate()));
+        imageTakeMedicine.setImageResource(alarmInfo.getTakeMedicine().getImageRes());
+
         alarmItemContainer.setOnClickListener(this);
         alarmItemContainer.setOnLongClickListener(this);
 
         imageAlarmSwitch.setOnClickListener(this);
-
-        textAlarmTime.setText(AppDateFormat.ALARM_TIME.format(alarm.getDate()));
-
-        setTakeMedicineState();
         imageTakeMedicine.setOnClickListener(this);
-    }
-
-    private void setTakeMedicineState() {
-        AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarm.getId());
-        TakeMedicineEnum currentTakeMedicineEnum
-                = TakeMedicineEnum.values()[alarmInfo.getTakeMedicine().ordinal()];
-        imageTakeMedicine.setImageResource(currentTakeMedicineEnum.getImageRes());
     }
 
     @Override
@@ -109,7 +105,6 @@ public class AlarmItemViewHolder extends BindingViewHolder<Alarm>
     }
 
     private void nextTakeMedicineState() {
-        AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarm.getId());
         int nextTakeMedicineOrdinal = (alarmInfo.getTakeMedicine().ordinal() + 1)
                 % TakeMedicineEnum.values().length;
         TakeMedicineEnum currentTakeMedicineEnum

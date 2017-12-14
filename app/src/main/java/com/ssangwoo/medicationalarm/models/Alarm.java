@@ -30,7 +30,6 @@ public class Alarm extends BaseModel implements LoadFromCursorListener {
     int id;
 
     @ForeignKey(stubbedRelationship = true)
-    @NotNull
     Medicine medicine;
 
     @Column

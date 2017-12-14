@@ -1,6 +1,9 @@
 package com.ssangwoo.medicationalarm.models;
 
+import android.util.Log;
+
 import com.raizlabs.android.dbflow.sql.language.Delete;
+import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
 
@@ -45,34 +48,29 @@ public class AppDatabaseDAO {
     }
 
     public static List<Alarm> selectAlarmList(int medicineId) {
-        List<Alarm> alarmList = new Select().from(Alarm.class)
+        return new Select().from(Alarm.class)
                 .where(Alarm_Table.medicine_id.eq(medicineId))
                 .orderBy(Alarm_Table.date, true).queryList();
-        for(Alarm alarm : alarmList) {
-            alarm.load();
-        }
-        return alarmList;
     }
 
     public static AlarmInfo selectTodayAlarmInfo(int alarmId) {
-        AlarmInfo alarmInfo = new Select().from(AlarmInfo.class)
-                .where(AlarmInfo_Table.alarm_id.eq(alarmId))
-                .orderBy(AlarmInfo_Table.takeDate, false)
-                .querySingle();
+        AlarmInfo alarmInfo = selectOnlyTodayAlarmInfo(alarmId);
         if(alarmInfo != null) {
-            alarmInfo.load();
-            alarmInfo.getAlarm().load();
-            alarmInfo.getAlarm().getMedicine().load();
+            alarmInfo.setAlarm(selectAlarm(alarmId));
+            alarmInfo.getAlarm().setMedicine(
+                    selectMedicine(alarmInfo.getAlarm().getMedicine().getId()));
         }
         return alarmInfo;
     }
 
-    // 위까지가 셀렉트
-
-    public static void nextAlarmDateUpdate(int alarmId) {
-        Alarm alarm = selectAlarm(alarmId);
-        nextAlarmDateUpdate(alarm);
+    public static AlarmInfo selectOnlyTodayAlarmInfo(int alarmId) {
+        return new Select().from(AlarmInfo.class)
+                .where(AlarmInfo_Table.alarm_id.eq(alarmId))
+                .orderBy(AlarmInfo_Table.id, false)
+                .querySingle();
     }
+
+    // 위까지가 셀렉트
 
     public static void nextAlarmDateUpdate(Alarm alarm) {
         Calendar changeCalendar = Calendar.getInstance();
@@ -100,12 +98,13 @@ public class AppDatabaseDAO {
 
         Alarm alarm = new Alarm(hour, minutes);
         alarm.setMedicine(medicine);
+        alarm.save();
 
-        AlarmInfo alarmInfo = new AlarmInfo(alarm);
+        AlarmInfo alarmInfo = new AlarmInfo(TakeMedicineEnum.NOT_YET_TAKE);
+        alarmInfo.setAlarm(alarm);
         alarmInfo.save();
 
         alarm.getAlarmInfoList().add(alarmInfo);
-
         nextAlarmDateUpdate(alarm);
 
         medicine.getAlarmList().add(alarm);
@@ -136,7 +135,6 @@ public class AppDatabaseDAO {
 
     public static void updateTakeMedicine(AlarmInfo alarmInfo,
                                           TakeMedicineEnum takeMedicineEnum) {
-        alarmInfo.load();
         alarmInfo.setTakeMedicine(takeMedicineEnum);
         if(alarmInfo.getTakeMedicine().equals(TakeMedicineEnum.TAKE)) {
             alarmInfo.setTakeDate(new Date());

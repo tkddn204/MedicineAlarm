@@ -5,6 +5,7 @@ import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.NotNull;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.annotation.TypeConverter;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ssangwoo.medicationalarm.AppDatabase;
 import com.ssangwoo.medicationalarm.enums.TakeMedicineEnum;
@@ -22,7 +23,6 @@ public class AlarmInfo extends BaseModel {
     int id;
 
     @ForeignKey(stubbedRelationship = true)
-    @NotNull
     Alarm alarm;
 
     @Column
@@ -32,20 +32,12 @@ public class AlarmInfo extends BaseModel {
     Date takeDate = new Date();
 
     @Column(typeConverter = TakeMedicineConverter.class)
-    TakeMedicineEnum takeMedicine = TakeMedicineEnum.NOT_YET_TAKE;
+    TakeMedicineEnum takeMedicine;
 
     public AlarmInfo() { }
 
-    public AlarmInfo(Alarm alarm) {
-        this.alarm = alarm;
-        this.pendingRequestNumber = 5378 *
-                (alarm.getMedicine().getId()+1) *
-                (alarm.getId()+1) + id;
-    }
-
-    public AlarmInfo(Alarm alarm, Date takeDate) {
-        this(alarm);
-        this.takeDate = takeDate;
+    public AlarmInfo(TakeMedicineEnum takeMedicine) {
+        this.takeMedicine = takeMedicine;
     }
 
     public int getId() {
@@ -62,6 +54,9 @@ public class AlarmInfo extends BaseModel {
 
     public void setAlarm(Alarm alarm) {
         this.alarm = alarm;
+        this.pendingRequestNumber = 5378 *
+                (alarm.getMedicine().getId()+1) *
+                (alarm.getId()+1) + id;
     }
 
     public int getPendingRequestNumber() {

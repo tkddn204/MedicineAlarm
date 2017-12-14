@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ssangwoo.medicationalarm.R;
-import com.ssangwoo.medicationalarm.lib.ObserverableAdapter;
+import com.ssangwoo.medicationalarm.lib.ObservableAdapter;
 import com.ssangwoo.medicationalarm.models.Medicine;
 import com.ssangwoo.medicationalarm.util.AppDateFormat;
 import com.ssangwoo.medicationalarm.views.activities.ShowMedicineActivity;
@@ -26,7 +26,7 @@ import java.util.Locale;
  */
 
 public class MedicineRecyclerViewAdapter
-        extends ObserverableAdapter<MedicineRecyclerViewAdapter.ViewHolder>
+        extends ObservableAdapter<MedicineRecyclerViewAdapter.ViewHolder>
         implements View.OnCreateContextMenuListener {
 
     Fragment fragment;

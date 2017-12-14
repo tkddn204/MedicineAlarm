@@ -2,12 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ssangwoo.medicationalarm">
 
-    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> -->
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -26,6 +24,15 @@
         <activity android:name=".views.activities.EditMedicineActivity" />
         <activity android:name=".views.activities.ShowMedicineActivity" />
 
+        <activity
+            android:name=".views.activities.SettingActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".views.activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ssangwoo.medicationalarm.views.activities.MainActivity" />
+        </activity>
+
         <service
             android:name=".alarms.AlarmSoundService"
             android:enabled="true"
@@ -39,15 +46,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <activity
-            android:name=".views.activities.SettingActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".views.activities.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ssangwoo.medicationalarm.views.activities.MainActivity" />
-        </activity>
     </application>
 
 </manifest>

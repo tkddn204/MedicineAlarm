@@ -33,8 +33,11 @@ public class AlarmNotification extends ContextWrapper {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "medicineAlarm");
 
+        AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
+
         Intent showMedicineIntent = new Intent(this, ShowMedicineActivity.class);
         showMedicineIntent.putExtra("medicine_id", medicine.getId());
+        showMedicineIntent.putExtra("notification_id", alarmInfo.getId()+1);
 
         Intent takeIntent = new Intent(this, AlarmReceiver.class);
         takeIntent.setAction(NotificationActionEnum.TAKE_BUTTON_CLICK_ACTION.getAction());
@@ -50,15 +53,13 @@ public class AlarmNotification extends ContextWrapper {
 
         String title = medicine.getTitle() + " 드실 시간입니다!";
 
-        AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
-
         builder.setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                .setSmallIcon(R.drawable.ic_alarm_small)
                .setContentTitle(title)
                .setContentText(medicine.getDescription())
                .setContentIntent(PendingIntent.getActivity(context,
                        alarmInfo.getPendingRequestNumber(),
-                       showMedicineIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+                       showMedicineIntent, PendingIntent.FLAG_CANCEL_CURRENT))
                .setDefaults(Notification.DEFAULT_ALL)
                .setPriority(NotificationCompat.PRIORITY_HIGH)
                .addAction(R.drawable.ic_done_black, getString(R.string.notification_take_medicine),

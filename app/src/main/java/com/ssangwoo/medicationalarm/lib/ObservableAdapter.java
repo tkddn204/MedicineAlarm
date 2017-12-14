@@ -14,7 +14,7 @@ import java.util.List;
  * Created by Ivan Prymak
  */
 
-public class ObserverableAdapter <VH extends RecyclerView.ViewHolder>
+public class ObservableAdapter<VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
 
     protected List<? extends BaseModel> dataList;
@@ -23,7 +23,7 @@ public class ObserverableAdapter <VH extends RecyclerView.ViewHolder>
 
     private FlowContentObserver.OnModelStateChangedListener listener;
 
-    public ObserverableAdapter(Class<? extends BaseModel> observableModel){
+    public ObservableAdapter(Class<? extends BaseModel> observableModel){
         this.observableModel = observableModel;
         mObserver = new FlowContentObserver(new Handler(Looper.getMainLooper()));
     }

@@ -44,16 +44,14 @@ public class AlarmController {
             AlarmManager alarmManager =
                     (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
+            assert alarmManager != null;
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    assert alarmManager != null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {;
                     alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                             nextAlarmTime, pendingIntent);
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    assert alarmManager != null;
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
                 } else {
-                    assert alarmManager != null;
                     alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarmTime, pendingIntent);
                 }
                 intent = new Intent("android.intent.action.ALARM_CHANGED");
@@ -62,7 +60,6 @@ public class AlarmController {
             } else {
                 AlarmManager.AlarmClockInfo alarmClockInfo
                         = new AlarmManager.AlarmClockInfo(nextAlarmTime, pendingIntent);
-                assert alarmManager != null;
                 alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
             }
         }
@@ -71,7 +68,7 @@ public class AlarmController {
     public void cancelAlarm(int alarmId) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra("alarm_id", alarmId);
-        AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarmId);
+        AlarmInfo alarmInfo = AppDatabaseDAO.selectOnlyTodayAlarmInfo(alarmId);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 alarmInfo.getPendingRequestNumber(),
@@ -100,7 +97,7 @@ public class AlarmController {
         if (!alarmList.isEmpty()) {
             for (Alarm alarm : alarmList) {
                 if (alarm.isEnable()) {
-                    AppDatabaseDAO.nextAlarmDateUpdate(alarm.getId());
+                    AppDatabaseDAO.nextAlarmDateUpdate(alarm);
                     AlarmInfo alarmInfo = AppDatabaseDAO.selectTodayAlarmInfo(alarm.getId());
                     cancelAlarm(alarmInfo.getAlarm().getId());
                     if (isAlarmOn) {

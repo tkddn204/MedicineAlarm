@@ -16,6 +16,7 @@ import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
 import com.raizlabs.android.dbflow.sql.language.SQLOperator;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.ssangwoo.medicationalarm.R;
+import com.ssangwoo.medicationalarm.alarms.notifications.AlarmNotification;
 import com.ssangwoo.medicationalarm.controllers.AlarmRecyclerViewAdapter;
 import com.ssangwoo.medicationalarm.lib.RecyclerViewEmptySupport;
 import com.ssangwoo.medicationalarm.models.AppDatabaseDAO;
@@ -40,11 +41,11 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
         medicine = AppDatabaseDAO.selectMedicine(medicineId);
         textTitle.setText(medicine.getTitle());
         if(medicine.getTitle().equals("")) {
-            textTitle.setText("약 이름 없음");
+            textTitle.setText("-");
         }
         textDesc.setText(medicine.getDescription());
         if(medicine.getDescription().equals("")) {
-            textDesc.setText("약 설명 없음");
+            textDesc.setText("-");
         }
         String dateString = AppDateFormat.buildDateString(medicine, "\n");
         textDate.setText(dateString);
@@ -113,6 +114,12 @@ public class ShowMedicineActivity extends BaseToolbarWithBackButtonActivity {
     @Override
     protected void initView() {
         super.initView();
+
+        if(getIntent().hasExtra("notification_id")) {
+            new AlarmNotification(getApplicationContext())
+                    .cancel(getIntent().getIntExtra("notification_id", -1));
+        }
+
         textTitle = findViewById(R.id.text_medicine_title);
         textDesc = findViewById(R.id.text_medicine_desc);
         textDate = findViewById(R.id.text_medicine_date);

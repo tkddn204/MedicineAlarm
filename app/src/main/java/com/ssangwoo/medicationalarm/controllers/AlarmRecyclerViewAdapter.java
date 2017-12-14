@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.AlarmAddItemViewHolder;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.AlarmItemViewHolder;
 import com.ssangwoo.medicationalarm.controllers.viewHolders.BindingViewHolder;
-import com.ssangwoo.medicationalarm.lib.ObserverableAdapter;
+import com.ssangwoo.medicationalarm.lib.ObservableAdapter;
 import com.ssangwoo.medicationalarm.models.Alarm;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  * Created by ssangwoo on 2017-10-29.
  */
 
-public class AlarmRecyclerViewAdapter extends ObserverableAdapter<BindingViewHolder> {
+public class AlarmRecyclerViewAdapter extends ObservableAdapter<BindingViewHolder> {
     private static final int LIST_ADD_ITEM = 10;
 
     public AlarmRecyclerViewAdapter(List<Alarm> alarmList) {
